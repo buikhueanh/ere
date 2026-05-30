@@ -72,35 +72,35 @@ export default function Navbar() {
         </div>
       </nav>
       {/* Mobile menu overlay */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 top-28 bg-background z-40 flex flex-col items-start justify-start gap-5 px-10 md:hidden">
-          {/* Main nav links */}
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setIsMenuOpen(false)}
-              className="text-xs tracking-widest uppercase hover:text-foreground transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
+      <div
+        className={`fixed inset-0 top-28 bg-background z-40 flex flex-col items-start justify-start gap-5 px-10 md:hidden transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+      >
+        {/* Main nav links */}
+        {navLinks.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            onClick={() => setIsMenuOpen(false)}
+            className="text-xs tracking-widest uppercase hover:text-foreground transition-colors"
+          >
+            {link.label}
+          </Link>
+        ))}
 
-          <div className="h-4" />
-          {/* Footer/support links */}
+        <div className="h-4" />
+        {/* Footer/support links */}
 
-          {supportLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setIsMenuOpen(false)}
-              className="text-xs tracking-widest uppercase text-foreground/50 hover:text-foreground transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      )}
+        {supportLinks.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            onClick={() => setIsMenuOpen(false)}
+            className="text-xs tracking-widest uppercase text-foreground/50 hover:text-foreground transition-colors"
+          >
+            {link.label}
+          </Link>
+        ))}
+      </div>
     </header>
   );
 }
