@@ -4,14 +4,14 @@ export default function HomePage() {
   return (
     <>
           {/* Hero */}
-      <section className="relative w-full h-screen flex items-center justify-center">
+      <section className="flex justify-center w-full mt-5">
         <Image
           src="/images/hero/homepage.jpeg"
           alt="ére"
           width={1000}
-          height={800}
+          height={500}
           priority
-          className="object-cover"
+          className="w-[300px] md:w-[600px] lg:w-[1000px] object-contain"
         />
       </section>
     </>

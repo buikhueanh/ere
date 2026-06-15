@@ -6,6 +6,7 @@ export async function getCollection(handle: string, first = 24): Promise<Shopify
   const data = await shopifyFetch<{ collection: ShopifyCollection | null }>({
     query: GET_COLLECTION_QUERY,
     variables: { handle, first },
+    revalidate: 60,
   });
   return data.collection;
 }

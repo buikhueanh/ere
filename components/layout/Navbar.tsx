@@ -10,7 +10,7 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   return (
     <header className="sticky top-0 z-50 bg-background border-b border-foreground/10">
-      <nav className="w-full px-10 h-16 flex items-center justify-between">
+      <nav className="w-full px-6 md:px-10 h-16 flex items-center justify-between">
         {/* Hamburger Menu (visible on Mobile) */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -73,7 +73,7 @@ export default function Navbar() {
       </nav>
       {/* Mobile menu overlay */}
       <div
-        className={`fixed inset-0 top-28 bg-background z-40 flex flex-col items-start justify-start gap-5 px-10 md:hidden transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed inset-0 top-16 md:top-28 bg-background z-40 flex flex-col items-start justify-start gap-5 px-6 md:px-10 md:hidden transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         {/* Main nav links */}
         {navLinks.map((link) => (

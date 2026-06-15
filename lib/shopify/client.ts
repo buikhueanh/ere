@@ -1,5 +1,8 @@
-const domain = process.env.SHOPIFY_STORE_DOMAIN!;
-const token = process.env.SHOPIFY_STOREFRONT_TOKEN!;
+// NEXT_PUBLIC_ vars are inlined into the browser bundle so cart mutations can
+// run client-side. The Storefront public token is designed to be exposed —
+// it only grants the unauthenticated scopes configured in the Headless channel.
+const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN ?? process.env.SHOPIFY_STORE_DOMAIN!;
+const token = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN ?? process.env.SHOPIFY_STOREFRONT_TOKEN!;
 
 const endpoint = `https://${domain}/api/2024-01/graphql.json`;
 
@@ -19,12 +22,13 @@ export async function shopifyFetch<T>({
   cache?: RequestCache;
   revalidate?: number;
 }): Promise<T> {
+  // Next.js rejects requests that set both `cache` and `next.revalidate` —
+  // when a revalidate window is given, it alone controls caching.
   const res = await fetch(endpoint, {
     method: 'POST',
     headers,
     body: JSON.stringify({ query, variables }),
-    cache,
-    next: revalidate !== undefined ? { revalidate } : undefined,
+    ...(revalidate !== undefined ? { next: { revalidate } } : { cache }),
   });
 
   if (!res.ok) {

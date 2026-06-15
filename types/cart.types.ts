@@ -1,21 +1,18 @@
+import type { Money, ShopifyImage } from './shopify.types';
+
 export interface CartLine {
   id: string;
   quantity: number;
   merchandise: {
     id: string;
-    title: string;
-    price: {
-      amount: string;
-      currencyCode: string;
-    };
+    image: ShopifyImage | null;
+    price: Money;
+    selectedOptions: Array<{ name: string; value: string }>;
     product: {
       handle: string;
       title: string;
-      images: {
-        nodes: Array<{ url: string; altText: string | null }>;
-      };
+      vendor: string;
     };
-    selectedOptions: Array<{ name: string; value: string }>;
   };
 }
 
@@ -27,7 +24,7 @@ export interface Cart {
     nodes: CartLine[];
   };
   cost: {
-    subtotalAmount: { amount: string; currencyCode: string };
-    totalAmount: { amount: string; currencyCode: string };
+    subtotalAmount: Money;
+    totalAmount: Money;
   };
 }
