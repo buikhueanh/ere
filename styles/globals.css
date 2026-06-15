@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+:root {
+  /* Base */
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+
+  /* Product UI — change any of these to restyle all product components */
+  --card-bg: #f5f3f0;       /* product image card background */
+  --border: #e8e6e3;        /* dividers, input outlines, card borders */
+  --muted: #a8a29e;         /* Sold Out label, placeholder text, disabled */
+  --muted-bg: #f0ede9;      /* sold-out size button fill */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card-bg: var(--card-bg);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-bg: var(--muted-bg);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+}
