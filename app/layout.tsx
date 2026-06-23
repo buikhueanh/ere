@@ -4,6 +4,7 @@ import '../styles/globals.css';
 import { CartProvider } from '@/context/CartProvider';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import CartDrawer from '@/components/ui/CartDrawer';
 
 const inter = Inter({
   variable: '--font-sans',
@@ -38,6 +39,7 @@ export default function RootLayout({
           <Navbar />
           <main className='flex-1'>{children}</main>
           <Footer />
+          <CartDrawer />
         </CartProvider>
       </body>
     </html>

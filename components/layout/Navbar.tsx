@@ -5,9 +5,12 @@ import Link from "next/link";
 import { Search, ShoppingBag, Menu, X } from "lucide-react";
 import { navLinks, supportLinks } from "@/config/navigation";
 import Image from "next/image";
+import { useCartContext } from "@/context/CartProvider";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { cart, openCart } = useCartContext();
+  const itemCount = cart?.totalQuantity ?? 0;
   return (
     <header className="sticky top-0 z-50 bg-background border-b border-foreground/10">
       <nav className="w-full px-6 md:px-10 h-16 flex items-center justify-between">
@@ -62,13 +65,18 @@ export default function Navbar() {
               className="text-foreground/70 hover:text-foreground transition-colors"
             />
           </Link>
-          <Link href="/cart" aria-label="Cart">
+          <button onClick={openCart} aria-label="Cart" className="relative">
             <ShoppingBag
               size={18}
               strokeWidth={1.5}
               className="text-foreground/70 hover:text-foreground transition-colors"
             />
-          </Link>
+            {itemCount > 0 && (
+              <span className="absolute -top-2 -right-2 min-w-4 h-4 px-1 flex items-center justify-center rounded-full bg-foreground text-background text-[10px] leading-none tabular-nums">
+                {itemCount}
+              </span>
+            )}
+          </button>
         </div>
       </nav>
       {/* Mobile menu overlay */}
