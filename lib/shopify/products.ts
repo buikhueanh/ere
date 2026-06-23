@@ -31,11 +31,17 @@ export function normalizeMetafields(raw: Array<RawMetafield | null>): ShopifyPro
   };
 }
 
+// Shared cache tag for all product reads. A Shopify product webhook calls
+// revalidateTag(PRODUCTS_TAG) to bust these instantly; the 60s revalidate
+// stays as a fallback in case a webhook is ever missed.
+export const PRODUCTS_TAG = 'products';
+
 export async function getProducts(first = 24): Promise<ShopifyProductCard[]> {
   const data = await shopifyFetch<{ products: { nodes: ShopifyProductCard[] } }>({
     query: GET_PRODUCTS_QUERY,
     variables: { first },
     revalidate: 60,
+    tags: [PRODUCTS_TAG],
   });
   return data.products.nodes;
 }
@@ -45,6 +51,7 @@ export async function getProductByHandle(handle: string): Promise<ShopifyProduct
     query: GET_PRODUCT_BY_HANDLE_QUERY,
     variables: { handle },
     revalidate: 60,
+    tags: [PRODUCTS_TAG],
   });
   if (!data.productByHandle) return null;
   const { metafields, ...product } = data.productByHandle;
