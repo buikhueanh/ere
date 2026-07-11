@@ -41,7 +41,7 @@ Tip: upload each designer's size-guide image to the file library **once**, then 
 
 | Field | Convention |
 |---|---|
-| Vendor | Designer name, spelled consistently — drives Designers page & cart display |
+| Vendor | Designer name, spelled consistently — drives Brands page & cart display |
 | Product type | Category label ("Shirts & Tops") — drives breadcrumb & filters |
 | Tags | `new-in` on new arrivals — the ONLY tag the storefront reads (v1) |
 | Options | Use option names exactly `Size` and `Color` — the PDP filters `selectedOptions` by these names |

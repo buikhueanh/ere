@@ -172,7 +172,7 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
             {breadcrumbNav}
 
             <div>
-              <h1 className="font-serif text-2xl mb-1">{title}</h1>
+              <h1 className="font-serif text-4xl mb-1">{title}</h1>
               <p className="text-sm font-sans">{displayPrice}</p>
             </div>
 
@@ -211,7 +211,7 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
             {breadcrumbNav}
 
             <div>
-              <h1 className="font-serif text-xl mb-1">{title}</h1>
+              <h1 className="font-serif text-3xl mb-1">{title}</h1>
               <p className="text-sm font-sans">{displayPrice}</p>
             </div>
 

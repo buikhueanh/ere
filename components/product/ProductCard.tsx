@@ -51,10 +51,10 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       {/* Name + price — stacked on mobile, side by side on desktop */}
       <div className="mt-3 flex flex-col md:flex-row md:items-start md:justify-between gap-1 md:gap-2">
-        <p className="text-xs tracking-widest text-foreground leading-relaxed">
+        <p className="text-sm tracking-widest text-foreground leading-relaxed">
           {title}
         </p>
-        <p className="text-xs tracking-widest uppercase text-foreground md:whitespace-nowrap">
+        <p className="text-sm tracking-widest uppercase text-foreground md:whitespace-nowrap">
           {price}
         </p>
       </div>

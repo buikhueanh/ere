@@ -13,7 +13,7 @@ Different designers have different size guides, so a single global size-guide mo
 |---|---|---|
 | **A. Per-product file metafield** (`custom.size_guide`) ✅ chosen | One query; per-product flexibility (tops vs. trousers charts differ); fits the upload-in-Admin workflow | Must attach guide on every product; forget = no guide on that PDP |
 | B. Frontend map vendor → guide image | No Shopify setup | Code change per new designer; typo in vendor breaks lookup |
-| C. Shopify Metaobject "Designer" (name, bio, size guide), referenced from products | Proper architecture; edit once; free content for Designers page | Most Admin setup; nested GraphQL reference query |
+| C. Shopify Metaobject "Designer" (name, bio, size guide), referenced from products | Proper architecture; edit once; free content for Brands page | Most Admin setup; nested GraphQL reference query |
 
 ## Decision (v1): Option A
 
@@ -24,6 +24,6 @@ Different designers have different size guides, so a single global size-guide mo
 
 ## Later version: Option C (Metaobjects)
 
-When the store has many designers or the Designers page needs bios/imagery, create a `designer` metaobject (name, bio, hero image, size guide) and reference it from products. The PDP modal component consumes an image URL either way, so migration touches the query layer only.
+When the store has many designers or the Brands page needs bios/imagery, create a `designer` metaobject (name, bio, hero image, size guide) and reference it from products. The PDP modal component consumes an image URL either way, so migration touches the query layer only.
 
-**Trigger to migrate:** building out the Designers page with per-designer content, or guide-attachment mistakes becoming frequent.
+**Trigger to migrate:** building out the Brands page with per-designer content, or guide-attachment mistakes becoming frequent.

@@ -14,7 +14,7 @@ Query only the fields the UI actually renders. The reference design is a Toteme/
 |---|---|
 | `product.id, handle, title` | Keys, URL, display name |
 | `product.descriptionHtml` | Short description on PDP (rich text) |
-| `product.vendor` | Designer name — accordion, cart line, Designers page |
+| `product.vendor` | Designer name — accordion, cart line, Brands page |
 | `product.productType` | "Shirts & Tops" — breadcrumb, filters |
 | `product.tags` | Only job: `new-in` tag drives the New In page |
 | `product.availableForSale` | "Sold out" state on shop-grid card |

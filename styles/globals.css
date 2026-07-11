@@ -3,7 +3,7 @@
 :root {
   /* Base */
   --background: #ffffff;
-  --foreground: #0a0a0a;
+  --foreground: #2D2D2E;
 
   /* Product UI — change any of these to restyle all product components */
   --card-bg: #f5f3f0;       /* product image card background */
@@ -19,9 +19,18 @@
   --color-border: var(--border);
   --color-muted: var(--muted);
   --color-muted-bg: var(--muted-bg);
-  --font-sans: var(--font-sans);
+  /* Rebrand (decision 010): Inter + Cormorant Garamond replaced by Libre
+     Baskerville. --font-sans is aliased to the same value so every existing
+     `font-sans` class renders in the new typeface without touching every
+     component that uses it. --font-script (Monsieur La Doulaise) is new,
+     for the wordmark/nav links as those get rebuilt. */
+  --font-sans: var(--font-serif);
   --font-serif: var(--font-serif);
+  --font-script: var(--font-script);
+  --font-handwriting: var(--font-handwriting);
+  --font-display: var(--font-display);
 }
+
 
 body {
   background: var(--background);

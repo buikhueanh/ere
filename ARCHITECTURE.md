@@ -1,4 +1,4 @@
-# ére — Architecture
+# ère — Architecture
 
 > Design decisions (data model, color swatches, size guide, checkout, required Shopify Admin setup) are recorded in [docs/decisions/](docs/decisions/README.md). Read those before changing the data model.
 
@@ -26,7 +26,7 @@ app/                        Next.js App Router pages
   page.tsx                  Homepage
   shop/page.tsx             Product listing
   products/[handle]/        Product detail (dynamic route)
-  designers/page.tsx        Designers index
+  brands/page.tsx           Brands index
   about/page.tsx            Brand page
   cart/page.tsx             Cart page (fallback for no-JS)
   search/page.tsx           Search results
@@ -81,7 +81,7 @@ types/
   global.types.ts           NavLink, SortOption, FilterState
 
 config/
-  navigation.ts             navLinks (Shop, Designers, About), supportLinks
+  navigation.ts             navLinks (Shop, Brands, About), supportLinks
   site.ts                   siteConfig — name, description, currency, locale, url
   filters.ts                sortOptions, sizeOptions, colorOptions
 
@@ -95,7 +95,7 @@ styles/
 
 public/
   images/logo.png
-  images/hero/homepage.jpeg
+  images/hero/homepage.png
 ```
 
 ## Data Flow

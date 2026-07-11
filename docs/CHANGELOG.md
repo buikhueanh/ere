@@ -91,3 +91,22 @@ Format per entry: **what broke** → **root cause** → **fix**.
   through the cloudflare tunnel domain — cosmetic, only happens if browsing via
   the tunnel instead of `localhost`.
 - `/cart`, `/search`, `/collections/[handle]` routes are still empty stubs.
+
+## 2026-07-08
+
+- **Waitlist signup failed with "Password is too long (maximum is 40
+  characters)."** → Shopify's `customerCreate` requires a password, and the
+  generated throwaway password was 48 hex chars — over Shopify's undocumented
+  40-char cap. → Reduced to 16 random bytes (32 hex chars) in
+  `lib/newsletter.ts`; added a `<= 40` length assertion to the unit test.
+  Caught by live form testing on `/coming-soon`; end-to-end verified — customer
+  created in Shopify with `marketingState: SUBSCRIBED`.
+
+- **`robots.txt` redirected to `/coming-soon` instead of being served.** →
+  The pre-launch gate middleware matched every route except `_next/static`
+  and `_next/image`, so the dynamically-generated `/robots.txt` route got
+  swept into the gate along with real pages — meaning crawlers couldn't even
+  read the "stay away" instruction while the site was gated. → Added
+  `/robots.txt` and `/sitemap.xml` to the always-allowed path list in
+  `lib/gate.ts`, verified with a live curl test (`200` instead of `307`).
+  See [decision 010](decisions/010-rebrand-renovation.md).

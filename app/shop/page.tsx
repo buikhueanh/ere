@@ -8,7 +8,7 @@ export default async function ShopPage() {
 
   return (
     <main className="px-6 md:px-10 py-12">
-      <h1 className="font-serif text-2xl mb-10 tracking-wide">Shop</h1>
+      <h1 className="text-4xl mb-10 tracking-wide">Shop</h1>
       <ProductGrid products={products} />
     </main>
   );
