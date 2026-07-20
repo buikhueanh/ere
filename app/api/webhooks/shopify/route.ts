@@ -2,6 +2,17 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 import { PRODUCTS_TAG } from '@/lib/shopify/products';
+import { SHOP_PLACEHOLDERS_TAG } from '@/lib/shopify/shop';
+import { HOMEPAGE_TAG } from '@/lib/shopify/homepage';
+
+// metaobjects/* webhooks fire for every metaobject type in the shop, not
+// just one — the payload's `type` field tells us which cache actually needs
+// busting, so an edit to shop_placeholder doesn't needlessly revalidate the
+// homepage cache and vice versa.
+const METAOBJECT_TAGS: Record<string, string> = {
+  shop_placeholder: SHOP_PLACEHOLDERS_TAG,
+  homepage_settings: HOMEPAGE_TAG,
+};
 
 // Shopify signs every webhook with HMAC-SHA256 over the raw body using the
 // app's webhook secret. We recompute it and compare, so nobody but Shopify can
@@ -29,12 +40,34 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
-  // Any product create/update/delete invalidates all product reads. We don't
-  // need to parse the body — the tag covers the grid and every PDP at once.
-  revalidateTag(PRODUCTS_TAG, 'max');
-
   const topic = request.headers.get('x-shopify-topic') ?? 'unknown';
-  console.log(`[webhook] ${topic} → revalidated "${PRODUCTS_TAG}"`);
+  let revalidated: string[];
+
+  if (topic.startsWith('metaobjects/')) {
+    let metaobjectType: string | undefined;
+    try {
+      metaobjectType = JSON.parse(rawBody).type;
+    } catch {
+      // Malformed body — fall through to the defensive case below.
+    }
+    const tag = metaobjectType ? METAOBJECT_TAGS[metaobjectType] : undefined;
+    if (tag) {
+      revalidateTag(tag, 'max');
+      revalidated = [tag];
+    } else {
+      // Unrecognized/unparsed type — safer to revalidate every
+      // metaobject-backed tag than to silently miss the update.
+      revalidated = Object.values(METAOBJECT_TAGS);
+      revalidated.forEach((t) => revalidateTag(t, 'max'));
+    }
+  } else {
+    // Product/collection webhooks — one shared tag covers the grid and
+    // every PDP at once, so we don't need to parse the body.
+    revalidateTag(PRODUCTS_TAG, 'max');
+    revalidated = [PRODUCTS_TAG];
+  }
+
+  console.log(`[webhook] ${topic} → revalidated ${revalidated.map((t) => `"${t}"`).join(', ')}`);
 
   return NextResponse.json({ revalidated: true });
 }

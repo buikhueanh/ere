@@ -1,15 +1,21 @@
-import { getProducts } from '@/lib/shopify/products';
-import ProductGrid from '@/components/product/ProductGrid';
+import ShopPageContent from '@/components/product/ShopPageContent';
 
 export const metadata = { title: 'Shop' };
 
-export default async function ShopPage() {
-  const products = await getProducts(48);
+interface ShopPageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function ShopPage({ searchParams }: ShopPageProps) {
+  const { page } = await searchParams;
 
   return (
-    <main className="px-6 md:px-10 py-12">
-      <h1 className="text-4xl mb-10 tracking-wide">Shop</h1>
-      <ProductGrid products={products} />
-    </main>
+    <ShopPageContent
+      pageKey="all-items"
+      heading="shop"
+      basePath="/shop"
+      requestedPage={Number(page) || 1}
+      showNewsletter
+    />
   );
 }

@@ -110,3 +110,25 @@ Format per entry: **what broke** → **root cause** → **fix**.
   `/robots.txt` and `/sitemap.xml` to the always-allowed path list in
   `lib/gate.ts`, verified with a live curl test (`200` instead of `307`).
   See [decision 010](decisions/010-rebrand-renovation.md).
+
+## 2026-07-11
+
+- **A Tank Top's Red color variant showed no swatch chip on the PDP.** →
+  `colorHexMap` (frontend fallback map) had no `Red` entry — but the deeper
+  cause was that Shopify's real swatch data was never queried at all. The
+  PDP only ever read `variant.selectedOptions` (plain name/value strings);
+  the actual hex lives on the separate product-level `options.optionValues.swatch`
+  field, which was confirmed live (via both Admin and Storefront API) to
+  already be set correctly for every product, including Red at `#f61f1f`. →
+  Added `options { optionValues { swatch { color } } }` to
+  `GET_PRODUCT_BY_HANDLE_QUERY`, threaded the type through
+  `ShopifyProduct.options`, and added `resolveColorHex()` in
+  `ProductDetail.tsx` to prefer the native swatch, falling back to
+  `colorHexMap` only for products that predate having one set. Verified live
+  — PDP now renders `#f61f1f` for Red directly from Shopify, no code change
+  needed for future colors. See [decision 002](decisions/002-color-swatch.md)
+  (migration from the original v1 plan).
+
+- **The 5 Shop collections returned `null` via the Storefront API** (`collectionByHandle`/`collection(handle:)` both gave nothing) despite existing in Admin. → Collections were published only to the "Online Store" sales channel, not "Eré Headless" — the channel the Storefront API token actually reads from. Same class of gotcha as earlier webhook/metaobject Storefront-access issues. → Published all 5 collections to the Headless channel via an Admin API `publishablePublish` mutation; verified live via Storefront API (`collection(handle: "tops")` now returns real products).
+
+- **`/brands/ère` 404'd even though the vendor "ère" has 6 real products** — `/brands/repos` worked fine. → Added debug logging and found `params.vendor` arrived as the literal string `"%C3%A8re"` (percent signs included) — Next.js's App Router does **not** auto-decode dynamic route segments containing percent-encoded UTF-8, contrary to assumption. The vendor query then searched for a vendor literally named `%C3%A8re`, which doesn't exist. → Added an explicit `decodeURIComponent()` call on the route param in `app/brands/[vendor]/page.tsx` before using it. `/shop/[collection]` was never affected since its segments (tops, bottoms, etc.) are plain ASCII and never get percent-encoded in the first place.

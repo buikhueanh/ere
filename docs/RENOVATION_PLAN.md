@@ -33,7 +33,7 @@ Status legend: ⬜ not started · 🟨 in progress · ✅ done
 - ✅ In-site navbar variant: script shop / new in / designer / journal + search/cart icons. PNG logo removed from navbar — the script `ère` in the footer is the home link now.
 - ✅ Mobile hamburger updated: script-font main links + support links, both variants verified in browser
 - ✅ Stub pages created so the new nav doesn't 404: `/new-in` (Phase 4 builds it), `/journal` (Phase 7), `/customer-care`, `/newsletter`
-- ⬜ Nav dropdown (Shop → category sub-menu with active-dot indicator) — **data model TBD, see decision 010 deferred section**
+- ~~Nav dropdown — data model TBD~~ → resolved by decision 011 (collections); build tracked in Phase 5
 
 ## Phase 3 — Homepage
 
@@ -41,27 +41,38 @@ Status legend: ⬜ not started · 🟨 in progress · ✅ done
 - ✅ `getHomepageSettings()` + normalizer (`lib/shopify/homepage.ts`), 60s revalidate under a `homepage` cache tag, unit-tested
 - 🟨 `homepage_settings` metaobject — **needs one-time setup in Shopify Admin** (definition + entry + Storefront access), steps given in session 2026-07-09
 
-## Phase 4 — New In page
+## Phase 4 — New In page ✅
 
-- ⬜ Plain grid, 4-up desktop / 2-up mobile
-- ⬜ Pagination: 4 rows/page, numbered page selector
-- ⬜ Newsletter signup module (after pagination, before footer)
+- ✅ Plain grid, 4-up desktop / 2-up mobile (reused existing `ProductGrid`/`ProductCard`)
+- ✅ Sort newest-first (`CREATED_AT` reverse) — already built into `getProducts()`, confirmed wired
+- ✅ Pagination: `lib/pagination.ts` (generic, reusable — 8 unit tests) + `components/ui/PageSelector.tsx`, 4 rows/page, numbered, bookmarkable `?page=N`
+- ✅ Newsletter signup module (after pagination, before footer)
+- Verified live: real products rendering, `200` on `/new-in` and `/new-in?page=2` (clamps gracefully rather than erroring)
 
-## Phase 5 — Shop page (hybrid curated layout)
+## Phase 5 — Shop page (categories + placeholders, decision 011)
 
-- ⬜ `shop_look` metaobject schema (styling_image, product_1/2/3, row_position)
-- ⬜ Row-rendering logic (claimed rows vs. plain catalog fill-in)
-- ⬜ Sold-out-in-look handling (keep + tag)
-- ⬜ Deleted-in-look handling (drop card silently)
-- ⬜ Row-position collision handling (first wins, second bumps)
-- ⬜ Mobile reflow: styling image full-width, 3 products in 2-up grid below
-- ⬜ Pagination: 4 content-blocks/page (look-group or 3-product batch), numbered page selector
-- ⬜ Newsletter signup module (after pagination, before footer) — shared component with New In's
+*(Old `shop_look` items removed — superseded by 011's product-free placeholders.)*
 
-## Phase 6 — Designer page
+- ✅ Shopify Admin: 5 collections created (tops/bottoms/accessories/homeware/self-care) — empty, user assigns products at their own pace
+- ✅ Shopify Admin: `shop_placeholder` metaobject definition created (image, position, page with a `choices` validation) + Storefront access enabled
+- ✅ **Publishing gotcha caught:** all 5 collections were published only to "Online Store," not the "Eré Headless" channel the Storefront token actually reads from — same class of issue as earlier webhook/metaobject setup. Published all 5 via Admin API mutation; verified live via Storefront API.
+- ✅ Interleave builder (`lib/shop-interleave.ts`): 3 products → next placeholder, plain-4 when exhausted — 8 unit tests
+- ✅ Pagination reuses `lib/pagination.ts` from Phase 4 (generic, works on any array — no shop-specific pagination code needed)
+- ✅ `getShopPageCards()` (`lib/shopify/shop.ts`): fetches products (all or by collection) + scoped placeholders in parallel, normalizes, interleaves — 6 unit tests on the normalizer
+- ✅ `/shop` and `/shop/[collection]` routes, sharing one `ShopPageContent` component; invalid collection segments 404 (not a silent fallback)
+- ✅ `ShopGrid` / `ShopPlaceholderCard` components — placeholders render as plain decorative image cards, no special full-width treatment (011 simplified this away from the old `shop_look` design)
+- ✅ Verified live: `/shop` (all products), `/shop/tops` (filtered correctly), `/shop/homeware` (empty collection → "No products found", not an error), `/shop/not-a-real-category` (404), pagination clamps gracefully
+- ✅ Nav hover-dropdowns: `NavDropdown` component, shown via CSS `group-hover`, dot indicator marks the hovered sub-item (or falls back to whichever matches the current page). Shop → all items + 5 categories. Brands → alphabetized vendors, fetched server-side in `layout.tsx` and passed into the client `Navbar`.
+- Mobile hamburger menu does **not** get expandable category/brand submenus in this pass — mobile "shop"/"brands" links just navigate directly, same as before. Scoped down deliberately to avoid a second interaction pattern; revisit if mobile category browsing turns out to matter.
+- 🟨 Placeholder cache staleness: no webhook wired for `shop_placeholder` metaobject changes yet — relies on the 60s revalidate fallback only
 
-- ⬜ Vendor list view (distinct `vendor` values)
-- ⬜ Filtered product grid by vendor
+## Phase 6 — Brands page ✅
+
+- ✅ Pulled forward while building the nav dropdown, since a working destination was needed anyway
+- ✅ `lib/shopify/vendors.ts`: `getVendors()` (alphabetized, dedupe'd) + `getProductsByVendor()` (reuses existing `SEARCH_PRODUCTS_QUERY`'s vendor search syntax, with cached revalidation instead of search's no-store)
+- ✅ `/brands` — real index, alphabetized vendor list
+- ✅ `/brands/[vendor]` — filtered product grid; zero products = not found (no fixed vendor list to validate against, unlike collections)
+- ✅ Verified live, including a real bug caught and fixed: `/brands/ère` 404'd because Next.js doesn't auto-decode percent-encoded route segments — see changelog
 
 ## Phase 7 — Journal page
 

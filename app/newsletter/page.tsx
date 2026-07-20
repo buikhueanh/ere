@@ -11,8 +11,8 @@ export default function NewsletterPage() {
   return (
     <div className="min-h-[70vh] flex items-center">
       <NewsletterSignup
-        headline="Into the world of ère"
-        subtext="Join our private guest list to access exclusive content and member-only perks."
+        headline="into the world of ère"
+        subtext="join our private guest list to access exclusive content and member-only perks."
         imageSrc="/images/newsletter/newsletter.png"
       />
     </div>

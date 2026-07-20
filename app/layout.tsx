@@ -5,6 +5,7 @@ import { CartProvider } from '@/context/CartProvider';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/ui/CartDrawer';
+import { getVendors } from '@/lib/shopify/vendors';
 
 // Rebrand (decision 010): Amiri replaces the former fonts (Inter +
 // Cormorant Garamond) for body/heading/UI text — mapped to --font-serif
@@ -52,16 +53,18 @@ export const metadata: Metadata = {
   description: 'Curated luxury fashion for the discerning.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const vendors = await getVendors();
+
   return (
     <html lang="en" className={`${amiri.variable} ${monsieurLaDoulaise.variable} ${nothingYouCouldDo.variable} ${cormorantInfant.variable}`}>
       <body className="min-h-screen flex flex-col antialiased">
         <CartProvider>
-          <Navbar />
+          <Navbar vendors={vendors} />
           <main className='flex-1'>{children}</main>
           <Footer />
           <CartDrawer />

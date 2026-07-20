@@ -1,5 +1,5 @@
 // Card fields — shop grid, search results, collection listings.
-const PRODUCT_CARD_FRAGMENT = `
+export const PRODUCT_CARD_FRAGMENT = `
   fragment ProductCard on Product {
     id
     handle
@@ -74,6 +74,15 @@ export const GET_PRODUCT_BY_HANDLE_QUERY = `
         nodes {
           url
           altText
+        }
+      }
+      options {
+        name
+        optionValues {
+          name
+          swatch {
+            color
+          }
         }
       }
       variants(first: 100) {

@@ -53,8 +53,12 @@ Four Google Fonts, each mapped to a CSS variable in `app/layout.tsx` (all `--fon
 
 | Variant | Where | Links |
 |---|---|---|
-| Homepage nav | `/` only | Newsletter · Search · Cart — **deliberately** no Shop/Designer/Journal. Confirmed intentional: the homepage hero image is the only path deeper into the site (→ New In). |
-| In-site nav | Shop, New In, Designer, Journal, PDP, etc. | Shop · New In · Designer · Journal · Search · Cart |
+| Homepage nav | `/` only | Newsletter · Search · Cart — **deliberately** no Shop/Brands. Confirmed intentional: the homepage hero image is the only path deeper into the site (→ New In). |
+| In-site nav | Shop, New In, Brands, PDP, etc. | Shop · New In · Brands · Search · Cart |
+
+**Naming:** "Designer" was renamed to **"Brands"** in the actual nav (`config/navigation.ts`) — this doc's older sections still say "Designer"; treat "Brands" as the current name for that page/link wherever "Designer" appears elsewhere in this document.
+
+**Journal is not currently in the nav.** The page and its boilerplate stay in the codebase (see section 10) so the route exists and can be built out, but it's intentionally left out of both navbar variants for now — add it back to the in-site nav link list when Journal is ready to go live.
 
 Mobile: same hamburger menu pattern as today, just with the updated link list per variant above — no new mobile nav pattern needed.
 
@@ -73,6 +77,10 @@ Plain grid. 4 columns desktop, 2 columns mobile/small tablet — same responsive
 **Pagination:** 4 rows per page, numbered page selector at the bottom (`/new-in?page=2`, bookmarkable). Page boundary is the same on mobile — same products per page — mobile just reflows each row into its normal 2-up grid (more vertical lines, same content).
 
 ### 8. Shop page — hybrid curated + catalog layout
+
+> **Superseded by [011](011-shop-categories-placeholders.md)** (2026-07-11):
+> the `shop_look` metaobject below was replaced by product-free placeholder
+> images, and categories/pagination were re-spec'd. Kept for history.
 
 **Problem this solves:** a pure editorial/curated layout (borrowed from magazine-style "shop the look" pages, e.g. Vogue) is never required to be exhaustive — but an ecommerce catalog page implicitly is. Forcing every active product into groups of exactly 3 creates a recurring "what about the leftovers" problem as inventory changes. Resolution: make curated rows an *overlay* on top of the full catalog, not a replacement for it.
 
@@ -100,11 +108,13 @@ Plain grid. 4 columns desktop, 2 columns mobile/small tablet — same responsive
 
 **Pagination:** the unit being counted is a **content block**, not a literal visual row — a block is either one `shop_look` group (3 products + image) or one batch of 3 plain products. A page = 4 blocks, numbered page selector at the bottom (`/shop?page=2`). Desktop and mobile show the *identical 4 blocks* per page — mobile only changes how tall each block renders (image full-width + 2-up products beneath, per the responsive rule above), never which blocks belong to which page.
 
-### 9. Designer page
+### 9. Brands page (formerly "Designer")
 
-List distinct `vendor` values across active products. Clicking a designer navigates to a product grid filtered by that vendor. No new data model — reuses the `vendor` field already on every product.
+List distinct `vendor` values across active products. Clicking a brand navigates to a product grid filtered by that vendor. No new data model — reuses the `vendor` field already on every product.
 
-### 10. Journal page (new — a blog)
+### 10. Journal page (new — a blog; not yet in nav)
+
+Boilerplate/route exists in the codebase now, but is intentionally excluded from both navbar variants until the page is ready to launch (see section 5).
 
 Use **Shopify's native Blog feature** (Online Store → Blog Posts in Admin), exposed via Storefront API blog/article queries. Non-technical person writes and publishes directly in Shopify Admin — same workflow they already use for products, no new tool or login.
 
@@ -144,6 +154,7 @@ Appears after the page selector, before the footer, on both Shop and New In page
 
 - Klaviyo/Mailchimp if automated email flows (welcome series, etc.) become needed beyond the single launch blast.
 - Heavier Journal layout tooling if Shopify's native blog editor proves too limited.
-- Revisit the homepage's "no direct nav to Shop/Designer/Journal" choice if analytics show it's actually hurting discovery rather than being a deliberate minimalist funnel.
+- Revisit the homepage's "no direct nav to Shop/Brands" choice if analytics show it's actually hurting discovery rather than being a deliberate minimalist funnel.
+- Add Journal back into the in-site nav once the page is ready to launch (section 5).
 
-**Trigger to revisit:** UX testing post-launch, or if Designer/Journal scope grows beyond what vendor-filtering and native blog posts can support.
+**Trigger to revisit:** UX testing post-launch, or if Brands/Journal scope grows beyond what vendor-filtering and native blog posts can support.

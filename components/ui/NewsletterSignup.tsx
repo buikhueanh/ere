@@ -31,7 +31,7 @@ export default function NewsletterSignup({
     e.preventDefault();
     if (!isValidEmail(email)) {
       setStatus('error');
-      setErrorMessage('Please enter a valid email address.');
+      setErrorMessage('please enter a valid email address.');
       return;
     }
     setStatus('submitting');
@@ -45,12 +45,12 @@ export default function NewsletterSignup({
       }
     } catch {
       setStatus('error');
-      setErrorMessage('Something went wrong. Please try again.');
+      setErrorMessage('something went wrong, please try again.');
     }
   }
 
   return (
-    <section className="w-full px-6 md:px-10 py-16 flex flex-col md:flex-row items-center gap-10 md:gap-16">
+    <section className="w-full px-6 md:px-10 py-10 flex flex-col md:flex-row items-center gap-10 md:gap-16">
       {/* Image */}
       <div className="relative w-full md:w-1/2 aspect-[4/3] bg-card-bg overflow-hidden">
         <Image
@@ -67,13 +67,13 @@ export default function NewsletterSignup({
           is present, instead of one-off top/bottom margins per element. */}
       <div className="w-full md:w-1/2 max-w-xl flex flex-col gap-4">
         <div className="flex flex-col gap-3">
-          <h2 className="font-handwriting italic text-4xl">{headline}</h2>
-          <p className="text-base text-foreground/70 leading-normal">{subtext}</p>
+          <h2 className="font-handwriting italic text-3xl">{headline}</h2>
+          <p className="text-xs text-foreground leading-normal">{subtext}</p>
         </div>
 
         {status === 'success' ? (
           <p className="text-base border border-border px-4 py-4">
-            Thank you - you&apos;re on the list.
+            thank you - you&apos;re on the list.
           </p>
         ) : (
           <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
@@ -82,14 +82,14 @@ export default function NewsletterSignup({
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="enter your email"
                 aria-label="Email address"
-                className="flex-1 border border-border border-r-0 px-4 py-3 text-base placeholder:text-muted focus:outline-none focus:border-foreground"
+                className="flex-1 border border-border border-r-0 px-4 py-3 text-xs placeholder:text-muted focus:outline-none focus:border-foreground"
               />
               <button
                 type="submit"
                 disabled={status === 'submitting'}
-                className="bg-foreground text-background px-6 py-3 text-base tracking-widest uppercase hover:bg-foreground/90 transition-colors disabled:opacity-60"
+                className="bg-foreground text-background px-6 py-3 text-xs tracking-widest lowercase hover:bg-foreground/90 transition-colors disabled:opacity-60"
               >
                 {status === 'submitting' ? 'Signing up…' : 'Sign Up'}
               </button>
@@ -97,9 +97,9 @@ export default function NewsletterSignup({
             {status === 'error' && (
               <p className="text-base text-foreground/70">{errorMessage}</p>
             )}
-            <p className="text-base text-muted leading-normal">
+            <p className="text-xs text-foreground lowercase">
               By signing up, you agree to receive email updates from ère and
-              acknowledge our privacy policy. Unsubscribe anytime.
+              acknowledge our privacy policy, Unsubscribe anytime.
             </p>
           </form>
         )}
