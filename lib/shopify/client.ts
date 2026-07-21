@@ -16,19 +16,22 @@ export async function shopifyFetch<T>({
   variables,
   cache = 'force-cache',
   revalidate,
+  tags,
 }: {
   query: string;
   variables?: Record<string, unknown>;
   cache?: RequestCache;
   revalidate?: number;
+  tags?: string[];
 }): Promise<T> {
   // Next.js rejects requests that set both `cache` and `next.revalidate` —
   // when a revalidate window is given, it alone controls caching.
+  // `tags` let a webhook bust this cache on demand via revalidateTag().
   const res = await fetch(endpoint, {
     method: 'POST',
     headers,
     body: JSON.stringify({ query, variables }),
-    ...(revalidate !== undefined ? { next: { revalidate } } : { cache }),
+    ...(revalidate !== undefined ? { next: { revalidate, tags } } : { cache }),
   });
 
   if (!res.ok) {

@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: 'ére',
+  name: 'ère',
   description: 'Curated luxury fashion for the discerning.',
   currency: 'USD',
   locale: 'en-US',

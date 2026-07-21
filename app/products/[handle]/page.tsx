@@ -24,4 +24,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) notFound();
 
   return <ProductDetail product={product} />;
+  
+    
 }

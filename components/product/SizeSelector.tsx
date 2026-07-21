@@ -52,7 +52,7 @@ export default function SizeSelector({
       {/* Trigger */}
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between border border-foreground px-4 py-3 text-xs tracking-widest text-foreground hover:bg-card-bg transition-colors"
+        className="w-full flex items-center justify-between border border-foreground px-4 py-3 text-base lowercase leading-none text-foreground hover:bg-input-fill transition-colors"
       >
         <span className={selectedSize ? '' : 'text-foreground/70'}>
           {selectedSize ?? 'Select Size'}
@@ -76,10 +76,10 @@ export default function SizeSelector({
                   setOpen(false);
                 }}
                 disabled={!available}
-                className={`w-full text-left px-4 py-3 text-xs tracking-widest uppercase transition-colors
+                className={`w-full text-left px-4 py-3 text-base leading-none lowercase transition-colors
                   ${available
                     ? selectedSize === size
-                      ? 'bg-foreground text-background'
+                      ? 'bg-input-fill text-foreground'
                       : 'text-foreground hover:bg-card-bg'
                     : 'bg-muted-bg text-muted line-through cursor-not-allowed'
                   }`}

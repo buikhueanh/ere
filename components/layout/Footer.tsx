@@ -1,25 +1,31 @@
 import Link from "next/link";
-import { supportLinks } from "@/config/navigation";
+import { footerLinks } from "@/config/navigation";
 
+const [aboutUsLink, customerCareLink] = footerLinks;
+
+// One universal footer layout, every page: about us bottom-left, copyright
+// center, customer care bottom-right. Dev credit intentionally left out for
+// now (quick-fix spec, 2026-07-xx) — previously this varied by page
+// (homepage/about/other), now unified.
 export default function Footer() {
   return (
-    <footer className="pt-10 pb-5 flex flex-row items-end justify-between px-10">
-      {/* support links */}
-      <div className="flex flex-col items-start gap-3 md:contents">
-        {supportLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className="text-xs tracking-widest uppercase text-foreground/50 hover:text-foreground transition-colors"
-          >
-            {link.label}
-          </Link>
-        ))}
-      </div>
+    <footer className="w-full bottom-0 pb-3 px-6 md:px-10 py-6 grid grid-cols-3 items-end gap-6">
+      <Link
+        href={aboutUsLink.href}
+        className="text-xs leading-none text-foreground/70 hover:text-foreground transition-colors justify-self-start"
+      >
+        {aboutUsLink.label}
+      </Link>
 
-      {/* copyright */}
-      <p className="text-xs text-foreground/50">
-        © 2026 <Link href="/">ére</Link>
+      <Link
+        href={customerCareLink.href}
+        className="text-xs leading-none text-foreground/70 hover:text-foreground transition-colors justify-self-center"
+      >
+        {customerCareLink.label}
+      </Link>
+
+      <p className="text-xs leading-none text-foreground/70 hover:text-foreground transition-colors justify-self-end">
+        © 2026 ère
       </p>
     </footer>
   );

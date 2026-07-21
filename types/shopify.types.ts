@@ -63,6 +63,16 @@ export interface ShopifyProduct {
   images: {
     nodes: ShopifyImage[];
   };
+  // Product-level option values, incl. Shopify's native swatch (set per
+  // color in Admin) — separate from each variant's selectedOptions, which
+  // only carry the plain name/value pair. See docs/decisions/002.
+  options: Array<{
+    name: string;
+    optionValues: Array<{
+      name: string;
+      swatch: { color: string | null } | null;
+    }>;
+  }>;
   variants: {
     nodes: ShopifyVariant[];
   };

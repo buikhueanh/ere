@@ -3,13 +3,14 @@
 :root {
   /* Base */
   --background: #ffffff;
-  --foreground: #0a0a0a;
+  --foreground: #2D2D2E;
 
   /* Product UI — change any of these to restyle all product components */
   --card-bg: #f5f3f0;       /* product image card background */
   --border: #e8e6e3;        /* dividers, input outlines, card borders */
   --muted: #a8a29e;         /* Sold Out label, placeholder text, disabled */
   --muted-bg: #f0ede9;      /* sold-out size button fill */
+  --input-fill: #f1f1f1;    /* size selector fill, breadcrumb text, disabled button fill, PDP dividers */
 }
 
 @theme inline {
@@ -19,12 +20,28 @@
   --color-border: var(--border);
   --color-muted: var(--muted);
   --color-muted-bg: var(--muted-bg);
-  --font-sans: var(--font-sans);
+  --color-input-fill: var(--input-fill);
+  /* Rebrand (decision 010): Inter + Cormorant Garamond replaced by Libre
+     Baskerville. --font-sans is aliased to the same value so every existing
+     `font-sans` class renders in the new typeface without touching every
+     component that uses it. --font-script (Monsieur La Doulaise) is new,
+     for the wordmark/nav links as those get rebuilt. */
+  --font-sans: var(--font-serif);
   --font-serif: var(--font-serif);
+  --font-script: var(--font-script);
+  --font-handwriting: var(--font-handwriting);
+  --font-display: var(--font-display);
 }
+
 
 body {
   background: var(--background);
   color: var(--foreground);
+  /* Registering --font-serif/--font-sans in @theme only creates the
+     .font-serif/.font-sans utility classes — it does NOT make either the
+     page's actual default font. Without this line, any element that never
+     opts into an explicit font-* class (headings, product cards, etc.)
+     silently falls back to the browser's default serif instead of Amiri. */
+  font-family: var(--font-serif);
   -webkit-font-smoothing: antialiased;
 }

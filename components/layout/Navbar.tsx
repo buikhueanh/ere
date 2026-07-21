@@ -1,60 +1,150 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
-import { Search, ShoppingBag, Menu, X } from "lucide-react";
-import { navLinks, supportLinks } from "@/config/navigation";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { Search, ShoppingBag, Menu, X, Plus, Minus } from "lucide-react";
+import { navLinks, footerLinks } from "@/config/navigation";
+import { shopCategories } from "@/config/shop-categories";
+import { useCartContext } from "@/context/CartProvider";
+import NavDropdown from "./NavDropdown";
 
-export default function Navbar() {
+interface NavbarProps {
+  vendors: string[];
+}
+
+const shopDropdownItems = [
+  { key: "all-items", label: "all items", href: "/shop" },
+  ...shopCategories.map((c) => ({
+    key: c.key,
+    label: c.label,
+    href: `/shop/${c.key}`,
+  })),
+];
+
+export default function Navbar({ vendors }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { cart, openCart } = useCartContext();
+  const itemCount = cart?.totalQuantity ?? 0;
+  const pathname = usePathname();
+
+  const openDropdown = (key: string) => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setActiveDropdown(key);
+  };
+  const closeDropdown = () => {
+    closeTimer.current = setTimeout(() => setActiveDropdown(null), 150);
+  };
+
+  // The pre-launch gate page has no navbar by design (decision 010 §2).
+  if (pathname === "/coming-soon") return null;
+
+  // Two variants (decision 010 §4): the homepage shows only "newsletter" +
+  // search/cart; everywhere else shows the full in-site links.
+  const isHomepage = pathname === "/";
+
   return (
-    <header className="sticky top-0 z-50 bg-background border-b border-foreground/10">
-      <nav className="w-full px-6 md:px-10 h-16 flex items-center justify-between">
-        {/* Hamburger Menu (visible on Mobile) */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label="Toggle Menu"
-          className="md:hidden text-foreground/70 hover:text-foreground transition-colors"
-        >
-          {isMenuOpen ? (
-            <X size={18} strokeWidth={1.5} />
+    <header className="relative sticky top-0 pt-1 pb-4 z-50 bg-background">
+      <nav className="w-full px-6 md:px-10 h-16 grid grid-cols-3 items-center">
+        {/* Left — homepage: newsletter link · in-site: hamburger (mobile) +
+            nav links (desktop). */}
+        <div className="flex items-center gap-4 justify-self-start">
+          {isHomepage ? (
+            <Link
+              href="/newsletter"
+              className="font-script text-4xl hover:text-foreground/70 transition-colors"
+            >
+              newsletter
+            </Link>
           ) : (
-            <Menu size={18} strokeWidth={1.5} />
-          )}
-        </button>
-
-        {/* Left — nav links (hidden on Mobile)*/}
-        <ul className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className="relative text-xs tracking-widest uppercase text-foreground/70 hover:text-foreground transition-colors after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-foreground after:transition-all hover:after:w-full"
+            <>
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label="Toggle Menu"
+                className="md:hidden text-foreground/70 hover:text-foreground transition-colors"
               >
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
+                {isMenuOpen ? (
+                  <X size={18} strokeWidth={1.5} />
+                ) : (
+                  <Menu size={18} strokeWidth={1.5} />
+                )}
+              </button>
+              <ul className="hidden md:flex items-stretch gap-12">
+                {navLinks.map((link) => {
+                  const isShop = link.href === "/shop";
+                  const isBrands = link.href === "/brands";
+                  return (
+                    <li
+                      key={link.href}
+                      className="flex items-center"
+                      onMouseEnter={() =>
+                        isShop || isBrands ? openDropdown(link.href) : undefined
+                      }
+                      onMouseLeave={closeDropdown}
+                    >
+                      <Link
+                        href={link.href}
+                        className="font-script text-4xl text-foreground hover:text-foreground/60 transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                      {isShop && activeDropdown === link.href && (
+                        <div
+                          onMouseEnter={() => openDropdown(link.href)}
+                          onMouseLeave={closeDropdown}
+                        >
+                          <NavDropdown
+                            items={shopDropdownItems}
+                            pathname={pathname}
+                          />
+                        </div>
+                      )}
+                      {isBrands &&
+                        vendors.length > 0 &&
+                        activeDropdown === link.href && (
+                          <div
+                            onMouseEnter={() => openDropdown(link.href)}
+                            onMouseLeave={closeDropdown}
+                          >
+                            <NavDropdown
+                              items={vendors.map((v) => ({
+                                key: v,
+                                label: v,
+                                href: `/brands/${encodeURIComponent(v)}`,
+                              }))}
+                              pathname={pathname}
+                            />
+                          </div>
+                        )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
+        </div>
 
-        {/* Center — logo */}
+        {/* Center — always the logo. justify-self-center keeps it centered
+            regardless of left/right content width. */}
         <Link
-          href="/"
-          aria-label="Home"
-          className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2"
+          href="/new-in"
+          aria-label="New In"
+          className="relative block w-24 h-8 justify-self-center"
         >
           <Image
-            src="/images/logo.png"
-            alt="ére"
-            width={40}
-            height={20}
-            priority
+            src="/images/logo-ere.png"
+            alt="ère"
+            fill
+            className="object-contain"
           />
         </Link>
 
         {/* Right — actions */}
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-5 justify-self-end">
           <Link href="/search" aria-label="Search">
             <Search
               size={18}
@@ -62,45 +152,99 @@ export default function Navbar() {
               className="text-foreground/70 hover:text-foreground transition-colors"
             />
           </Link>
-          <Link href="/cart" aria-label="Cart">
+          <button onClick={openCart} aria-label="Cart" className="relative">
             <ShoppingBag
               size={18}
               strokeWidth={1.5}
               className="text-foreground/70 hover:text-foreground transition-colors"
             />
-          </Link>
+            {itemCount > 0 && (
+              <span className="absolute -top-2 -right-2 min-w-4 h-4 px-1 flex items-center justify-center rounded-full bg-foreground text-background text-[10px] leading-none tabular-nums">
+                {itemCount}
+              </span>
+            )}
+          </button>
         </div>
       </nav>
-      {/* Mobile menu overlay */}
-      <div
-        className={`fixed inset-0 top-16 md:top-28 bg-background z-40 flex flex-col items-start justify-start gap-5 px-6 md:px-10 md:hidden transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
-      >
-        {/* Main nav links */}
-        {navLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            onClick={() => setIsMenuOpen(false)}
-            className="text-xs tracking-widest uppercase hover:text-foreground transition-colors"
-          >
-            {link.label}
-          </Link>
-        ))}
 
-        <div className="h-4" />
-        {/* Footer/support links */}
+      {/* Mobile menu overlay (in-site variant only) */}
+      {!isHomepage && (
+        <div
+          className={`fixed inset-0 top-16 bg-background z-40 flex flex-col items-start justify-start gap-5 px-6 md:px-10 md:hidden transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+        >
+          {navLinks.map((link) => {
+            const isShop = link.href === "/shop";
+            const isBrands = link.href === "/brands";
+            const isExpandable = isShop || isBrands;
+            const subItems = isShop
+              ? shopDropdownItems
+              : isBrands
+                ? vendors.map((v) => ({ key: v, label: v, href: `/brands/${encodeURIComponent(v)}` }))
+                : [];
+            const isExpanded = mobileExpanded === link.href;
 
-        {supportLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            onClick={() => setIsMenuOpen(false)}
-            className="text-xs tracking-widest uppercase text-foreground/50 hover:text-foreground transition-colors"
-          >
-            {link.label}
-          </Link>
-        ))}
-      </div>
+            return (
+              <div key={link.href} className="w-full">
+                {/* w-full + justify-between on every row means the +/-
+                    button always lands at the same right-hand x position,
+                    so shop's and brands' toggles line up vertically even
+                    though their labels are different widths. */}
+                <div className="flex items-center justify-between w-full">
+                  <Link
+                    href={link.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="font-script text-3xl hover:text-foreground/60 transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                  {isExpandable && subItems.length > 0 && (
+                    <button
+                      onClick={() => setMobileExpanded(isExpanded ? null : link.href)}
+                      aria-label={isExpanded ? `Collapse ${link.label}` : `Expand ${link.label}`}
+                      className="w-6 flex justify-center text-foreground/70 hover:text-foreground transition-colors"
+                    >
+                      {isExpanded ? (
+                        <Minus size={14} strokeWidth={1.5} />
+                      ) : (
+                        <Plus size={14} strokeWidth={1.5} />
+                      )}
+                    </button>
+                  )}
+                </div>
+
+                {isExpandable && isExpanded && (
+                  <ul className="mt-3 pl-4 flex flex-col gap-3">
+                    {subItems.map((item) => (
+                      <li key={item.key}>
+                        <Link
+                          href={item.href}
+                          onClick={() => setIsMenuOpen(false)}
+                          className="text-xs lowercase text-foreground/70 hover:text-foreground transition-colors"
+                        >
+                          {item.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            );
+          })}
+
+          <div className="h-4" />
+
+          {footerLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setIsMenuOpen(false)}
+              className="text-xs tracking-widest lowercase hover:text-foreground transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      )}
     </header>
   );
 }

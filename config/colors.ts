@@ -1,7 +1,7 @@
-// Color name → hex map for color swatches on the PDP.
-// Shopify stores color as a plain string (e.g. "Black", "White").
-// This maps those strings to a display hex. Unknown names render no swatch chip.
-// See docs/decisions/002 for why this lives here vs a Shopify metafield.
+// Fallback color name → hex map, used only when a product's Color option
+// value has no native Shopify swatch set (see resolveColorHex in
+// ProductDetail.tsx). New products should set a real swatch in Shopify
+// Admin instead of relying on this map. See docs/decisions/002.
 export const colorHexMap: Record<string, string> = {
   Black: '#0a0a0a',
   White: '#f5f3f0',
@@ -15,4 +15,5 @@ export const colorHexMap: Record<string, string> = {
   Navy: '#1f2a44',
   Brown: '#6b4c3b',
   Ecru: '#ede8d8',
+  Red: '#b3261e',
 };

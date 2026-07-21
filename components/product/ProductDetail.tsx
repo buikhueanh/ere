@@ -25,6 +25,16 @@ function resolveVariant(
   }) ?? null;
 }
 
+// Resolve a color's swatch hex: prefer Shopify's native option-value swatch
+// (set per color in Admin — any new color just works, no redeploy needed),
+// falling back to the local colorHexMap only for products created before
+// swatches were set. See docs/decisions/002.
+function resolveColorHex(options: ShopifyProduct['options'], color: string): string | null {
+  const colorOption = options.find((o) => o.name === 'Color');
+  const nativeHex = colorOption?.optionValues.find((v) => v.name === color)?.swatch?.color;
+  return nativeHex ?? colorHexMap[color] ?? null;
+}
+
 // For a given color, check if every variant in that color is sold out.
 function isColorSoldOut(variants: ShopifyVariant[], color: string): boolean {
   const colorVariants = variants.filter((v) =>
@@ -90,10 +100,10 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
     <nav className="flex items-center gap-2">
       {breadcrumb.map((c, i) => (
         <span key={c.handle} className="flex items-center gap-2">
-          {i > 0 && <span className="text-muted text-xs">·</span>}
+          {i > 0 && <span className="text-muted text-base">·</span>}
           <Link
             href={`/collections/${c.handle}`}
-            className="text-xs tracking-widest text-muted hover:text-foreground transition-colors"
+            className="text-base lowercase leading-none text-foreground hover:text-foreground transition-colors"
           >
             {c.title}
           </Link>
@@ -104,10 +114,10 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
 
   const colorPicker = uniqueColors.length > 0 && (
     <div>
-      <p className="text-xs tracking-widest mb-3">Color : {selectedColor ?? ''}</p>
+      <p className="text-base lowercase leading-none text-foreground mb-3">Color : {selectedColor ?? ''}</p>
       <div className="flex gap-2">
         {uniqueColors.map((color) => {
-          const hex = colorHexMap[color];
+          const hex = resolveColorHex(product.options, color);
           const soldOut = isColorSoldOut(variants.nodes, color);
           return (
             <button
@@ -129,7 +139,7 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
   const sizeGuideButton = metafields.sizeGuide && (
     <button
       onClick={() => setSizeGuideOpen(true)}
-      className="text-xs tracking-widest underline underline-offset-2 text-foreground/60 hover:text-foreground transition-colors"
+      className="text-base lowercase leading-none underline underline-offset-2 text-foreground/70 hover:text-foreground transition-colors"
     >
       Size Guide
     </button>
@@ -138,12 +148,12 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
   const accordions = (
     <>
       {accordionRows.length > 0 && (
-        <Accordion label="More information">
+        <Accordion label="more information">
           <dl className="space-y-3">
             {accordionRows.map((row) => (
               <div key={row.label} className="flex gap-4">
-                <dt className="text-xs tracking-widest text-muted w-24 shrink-0">{row.label}</dt>
-                <dd className="text-xs whitespace-pre-line">{row.value}</dd>
+                <dt className="text-base lowercase leading-none text-foreground/70 hover:text-foreground transition-colors w-24 shrink-0">{row.label}</dt>
+                <dd className="text-base lowercase leading-none text-foreground/70 hover:text-foreground transition-colors whitespace-pre-line">{row.value}</dd>
               </div>
             ))}
           </dl>
@@ -154,7 +164,7 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
 
   const description = descriptionHtml && (
     <div
-      className="text-xs font-sans text-foreground/70 leading-relaxed prose-sm"
+      className="text-base lowercase leading-none text-foreground/70 hover:text-foreground transition-colors prose-sm"
       dangerouslySetInnerHTML={{ __html: descriptionHtml }}
     />
   );
@@ -162,25 +172,31 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
   return (
     <>
       <main className="px-4 md:px-10 py-6 md:py-12">
-        {/* ── Desktop: gallery + info panel ── */}
-        <div className="hidden md:grid md:grid-cols-[1fr_1fr_380px] md:gap-10">
-          <div className="col-span-2">
-            <ProductGallery images={galleryImages} title={title} />
-          </div>
+        {/* ── Desktop: gallery + info panel ──
+            3 explicit columns: thumbnail (fixed 5rem, matches the old
+            w-20) · big image (1fr) · info panel (1fr) — the equal fr
+            units make the big image and info panel exactly the same
+            width, split evenly across the space remaining after the
+            thumbnail column. Gap is gap-10, matching the page's own
+            px-10 side padding, so the thumbnail→image gap equals the
+            outer margin. See ProductGallery.tsx for how its children
+            become direct grid items via display:contents. */}
+        <div className="hidden md:grid md:grid-cols-[5rem_1fr_1fr] md:gap-10">
+          <ProductGallery images={galleryImages} title={title} />
 
-          <div className="flex flex-col gap-5">
+          <div className="md:col-start-3 flex flex-col gap-4">
             {breadcrumbNav}
 
             <div>
-              <h1 className="font-serif text-2xl mb-1">{title}</h1>
-              <p className="text-sm font-sans">{displayPrice}</p>
+              <h1 className="font-script italic text-4xl lowercase mb-4.5">{title}</h1>
+              <p className="text-base lowercase leading-none text-foreground">{displayPrice}</p>
             </div>
 
             {colorPicker}
 
             <div>
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs tracking-widest">Size</p>
+                <p className="text-base lowercase leading-none text-foreground">Size</p>
                 {sizeGuideButton}
               </div>
               <SizeSelector
@@ -194,7 +210,7 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
             <div>
               <AddToCartButton variantId={selectedSize ? resolvedVariant?.id ?? null : null} />
               {!selectedSize && (
-                <p className="text-xs text-muted mt-2 text-center tracking-wide">Please select a size</p>
+                <p className="text-base lowercase leading-none text-foreground mt-2 text-center">Please select a size</p>
               )}
             </div>
 
@@ -207,19 +223,19 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
         <div className="md:hidden">
           <ProductGallery images={galleryImages} title={title} />
 
-          <div className="pt-5 pb-28 space-y-5">
+          <div className="pt-5 pb-28 space-y-4">
             {breadcrumbNav}
 
             <div>
-              <h1 className="font-serif text-xl mb-1">{title}</h1>
-              <p className="text-sm font-sans">{displayPrice}</p>
+              <h1 className="font-script italic text-3xl lowercase mb-1">{title}</h1>
+              <p className="text-base lowercase leading-none text-foreground">{displayPrice}</p>
             </div>
 
             {colorPicker}
 
             <div>
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs tracking-widest">Size</p>
+                <p className="text-base lowercase text-foreground">Size</p>
                 {sizeGuideButton}
               </div>
               <SizeSelector
@@ -253,11 +269,11 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
           >
             <button
               onClick={() => setSizeGuideOpen(false)}
-              className="absolute top-4 right-4 text-xs tracking-widest hover:text-foreground/60 transition-colors"
+              className="absolute top-4 right-4 text-xs lowercase leading-none text-foreground/70 hover:text-foreground transition-colors"
             >
               Close
             </button>
-            <p className="text-xs tracking-widest mb-4">Size Guide</p>
+            <p className="text-xs lowercase leading-none text-foreground/70 hover:text-foreground transition-colors mb-4">Size Guide</p>
             <div className="relative w-full aspect-[3/4]">
               <Image
                 src={metafields.sizeGuide.url}
@@ -268,6 +284,7 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
             </div>
           </div>
         </div>
+        
       )}
     </>
   );
