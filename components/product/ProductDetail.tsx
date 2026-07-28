@@ -222,19 +222,19 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
         <div className="md:hidden">
           <ProductGallery images={galleryImages} title={title} />
 
-          <div className="pt-5 pb-28 space-y-4">
+          <div className="mt-5 space-y-4">
             {breadcrumbNav}
 
             <div>
-              <h1 className="font-script text-3xl lowercase mb-1">{title}</h1>
-              <p className="text-xs lowercase leading-none text-foreground">{displayPrice}</p>
+              <h1 className="-mt-2 font-script text-3xl lowercase">{title}</h1>
+              <p className="mt-3 -mb-0.5in  text-xs lowercase leading-none text-foreground">{displayPrice}</p>
             </div>
 
-            {colorPicker}
+          {colorPicker}
 
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-xs lowercase text-foreground">Size</p>
+              <div className="flex items-center justify-between">
+                <p className="mb-3.5 text-xs lowercase text-foreground">Size</p>
                 {sizeGuideButton}
               </div>
               <SizeSelector
@@ -246,7 +246,7 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
             </div>
 
             {description}
-            <div>{accordions}</div>
+            {accordions}
           </div>
 
           {/* Sticky add to bag */}
