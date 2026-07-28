@@ -100,10 +100,10 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
     <nav className="flex items-center gap-2">
       {breadcrumb.map((c, i) => (
         <span key={c.handle} className="flex items-center gap-2">
-          {i > 0 && <span className="text-muted text-base">·</span>}
+          {i > 0 && <span className="text-muted text-xs">·</span>}
           <Link
             href={`/collections/${c.handle}`}
-            className="text-base lowercase leading-none text-foreground hover:text-foreground transition-colors"
+            className="text-xs lowercase leading-none text-foreground hover:text-foreground transition-colors"
           >
             {c.title}
           </Link>
@@ -112,9 +112,12 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
     </nav>
   );
 
+  // Fragment (no wrapping div) so the label and swatch row become two
+  // direct children of the parent's flex gap — spacing comes purely from
+  // that gap, not a built-in margin on the label.
   const colorPicker = uniqueColors.length > 0 && (
-    <div>
-      <p className="text-base lowercase leading-none text-foreground mb-3">Color : {selectedColor ?? ''}</p>
+    <>
+      <p className="text-xs lowercase leading-none text-foreground">Color : {selectedColor ?? ''}</p>
       <div className="flex gap-2">
         {uniqueColors.map((color) => {
           const hex = resolveColorHex(product.options, color);
@@ -133,13 +136,13 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
           );
         })}
       </div>
-    </div>
+    </>
   );
 
   const sizeGuideButton = metafields.sizeGuide && (
     <button
       onClick={() => setSizeGuideOpen(true)}
-      className="text-base lowercase leading-none underline underline-offset-2 text-foreground/70 hover:text-foreground transition-colors"
+      className="text-xs lowercase leading-none underline underline-offset-2 text-foreground/70 hover:text-foreground transition-colors"
     >
       Size Guide
     </button>
@@ -152,8 +155,8 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
           <dl className="space-y-3">
             {accordionRows.map((row) => (
               <div key={row.label} className="flex gap-4">
-                <dt className="text-base lowercase leading-none text-foreground/70 hover:text-foreground transition-colors w-24 shrink-0">{row.label}</dt>
-                <dd className="text-base lowercase leading-none text-foreground/70 hover:text-foreground transition-colors whitespace-pre-line">{row.value}</dd>
+                <dt className="text-xs lowercase leading-none text-foreground/70 hover:text-foreground transition-colors w-24 shrink-0">{row.label}</dt>
+                <dd className="text-xs lowercase leading-none text-foreground/70 hover:text-foreground transition-colors whitespace-pre-line">{row.value}</dd>
               </div>
             ))}
           </dl>
@@ -164,7 +167,7 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
 
   const description = descriptionHtml && (
     <div
-      className="text-base lowercase leading-none text-foreground/70 hover:text-foreground transition-colors prose-sm"
+      className="text-xs lowercase leading-none text-foreground/70 hover:text-foreground transition-colors prose-sm"
       dangerouslySetInnerHTML={{ __html: descriptionHtml }}
     />
   );
@@ -187,35 +190,31 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
           <div className="md:col-start-3 flex flex-col gap-4">
             {breadcrumbNav}
 
-            <div>
-              <h1 className="font-script italic text-4xl lowercase mb-4.5">{title}</h1>
-              <p className="text-base lowercase leading-none text-foreground">{displayPrice}</p>
-            </div>
+            {/* -mt-2 cancels the parent's gap-4 just for this pair, so
+                the title sits flush under the breadcrumb. */}
+            <h1 className=" font-script text-4xl lowercase">{title}</h1>
+            <p className="text-xs lowercase leading-none text-foreground -mb-0.5">{displayPrice}</p>
 
             {colorPicker}
 
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-base lowercase leading-none text-foreground">Size</p>
-                {sizeGuideButton}
-              </div>
-              <SizeSelector
-                variants={variants.nodes}
-                selectedColor={selectedColor}
-                selectedSize={selectedSize}
-                onSizeChange={setSelectedSize}
-              />
+            <div className="flex items-center justify-between">
+              <p className="text-xs lowercase leading-none text-foreground">Size</p>
+              {sizeGuideButton}
             </div>
+            <SizeSelector
+              variants={variants.nodes}
+              selectedColor={selectedColor}
+              selectedSize={selectedSize}
+              onSizeChange={setSelectedSize}
+            />
 
-            <div>
-              <AddToCartButton variantId={selectedSize ? resolvedVariant?.id ?? null : null} />
-              {!selectedSize && (
-                <p className="text-base lowercase leading-none text-foreground mt-2 text-center">Please select a size</p>
-              )}
-            </div>
+            <AddToCartButton variantId={selectedSize ? resolvedVariant?.id ?? null : null} />
+            {!selectedSize && (
+              <p className="text-xs lowercase leading-none text-foreground text-center">Please select a size</p>
+            )}
 
             {description}
-            <div>{accordions}</div>
+            {accordions}
           </div>
         </div>
 
@@ -227,15 +226,15 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
             {breadcrumbNav}
 
             <div>
-              <h1 className="font-script italic text-3xl lowercase mb-1">{title}</h1>
-              <p className="text-base lowercase leading-none text-foreground">{displayPrice}</p>
+              <h1 className="font-script text-3xl lowercase mb-1">{title}</h1>
+              <p className="text-xs lowercase leading-none text-foreground">{displayPrice}</p>
             </div>
 
             {colorPicker}
 
             <div>
               <div className="flex items-center justify-between mb-3">
-                <p className="text-base lowercase text-foreground">Size</p>
+                <p className="text-xs lowercase text-foreground">Size</p>
                 {sizeGuideButton}
               </div>
               <SizeSelector

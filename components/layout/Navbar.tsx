@@ -129,10 +129,10 @@ export default function Navbar({ vendors }: NavbarProps) {
         </div>
 
         {/* Center — always the logo. justify-self-center keeps it centered
-            regardless of left/right content width. */}
+              regardless of left/right content width. On the homepage it links to New In; everywhere else it links back home */}
         <Link
-          href="/new-in"
-          aria-label="New In"
+          href={isHomepage ? "/new-in" : "/"}
+          aria-label={isHomepage ? "New In" : "Home"}
           className="relative block w-24 h-8 justify-self-center"
         >
           <Image
@@ -179,7 +179,11 @@ export default function Navbar({ vendors }: NavbarProps) {
             const subItems = isShop
               ? shopDropdownItems
               : isBrands
-                ? vendors.map((v) => ({ key: v, label: v, href: `/brands/${encodeURIComponent(v)}` }))
+                ? vendors.map((v) => ({
+                    key: v,
+                    label: v,
+                    href: `/brands/${encodeURIComponent(v)}`,
+                  }))
                 : [];
             const isExpanded = mobileExpanded === link.href;
 
@@ -199,8 +203,14 @@ export default function Navbar({ vendors }: NavbarProps) {
                   </Link>
                   {isExpandable && subItems.length > 0 && (
                     <button
-                      onClick={() => setMobileExpanded(isExpanded ? null : link.href)}
-                      aria-label={isExpanded ? `Collapse ${link.label}` : `Expand ${link.label}`}
+                      onClick={() =>
+                        setMobileExpanded(isExpanded ? null : link.href)
+                      }
+                      aria-label={
+                        isExpanded
+                          ? `Collapse ${link.label}`
+                          : `Expand ${link.label}`
+                      }
                       className="w-6 flex justify-center text-foreground/70 hover:text-foreground transition-colors"
                     >
                       {isExpanded ? (
