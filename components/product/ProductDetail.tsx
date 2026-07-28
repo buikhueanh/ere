@@ -112,9 +112,12 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
     </nav>
   );
 
+  // Fragment (no wrapping div) so the label and swatch row become two
+  // direct children of the parent's flex gap — spacing comes purely from
+  // that gap, not a built-in margin on the label.
   const colorPicker = uniqueColors.length > 0 && (
-    <div>
-      <p className="text-base lowercase leading-none text-foreground mb-3">Color : {selectedColor ?? ''}</p>
+    <>
+      <p className="text-base lowercase leading-none text-foreground">Color : {selectedColor ?? ''}</p>
       <div className="flex gap-2">
         {uniqueColors.map((color) => {
           const hex = resolveColorHex(product.options, color);
@@ -133,7 +136,7 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
           );
         })}
       </div>
-    </div>
+    </>
   );
 
   const sizeGuideButton = metafields.sizeGuide && (
@@ -187,35 +190,31 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
           <div className="md:col-start-3 flex flex-col gap-4">
             {breadcrumbNav}
 
-            <div>
-              <h1 className="font-script italic text-4xl lowercase mb-4.5">{title}</h1>
-              <p className="text-base lowercase leading-none text-foreground">{displayPrice}</p>
-            </div>
+            {/* -mt-4 cancels the parent's gap-4 just for this pair, so
+                the title sits flush under the breadcrumb. */}
+            <h1 className="font-script italic text-4xl lowercase -mt-4">{title}</h1>
+            <p className="text-base lowercase leading-none text-foreground">{displayPrice}</p>
 
             {colorPicker}
 
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-base lowercase leading-none text-foreground">Size</p>
-                {sizeGuideButton}
-              </div>
-              <SizeSelector
-                variants={variants.nodes}
-                selectedColor={selectedColor}
-                selectedSize={selectedSize}
-                onSizeChange={setSelectedSize}
-              />
+            <div className="flex items-center justify-between">
+              <p className="text-base lowercase leading-none text-foreground">Size</p>
+              {sizeGuideButton}
             </div>
+            <SizeSelector
+              variants={variants.nodes}
+              selectedColor={selectedColor}
+              selectedSize={selectedSize}
+              onSizeChange={setSelectedSize}
+            />
 
-            <div>
-              <AddToCartButton variantId={selectedSize ? resolvedVariant?.id ?? null : null} />
-              {!selectedSize && (
-                <p className="text-base lowercase leading-none text-foreground mt-2 text-center">Please select a size</p>
-              )}
-            </div>
+            <AddToCartButton variantId={selectedSize ? resolvedVariant?.id ?? null : null} />
+            {!selectedSize && (
+              <p className="text-base lowercase leading-none text-foreground text-center">Please select a size</p>
+            )}
 
             {description}
-            <div>{accordions}</div>
+            {accordions}
           </div>
         </div>
 
