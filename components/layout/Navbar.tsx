@@ -48,15 +48,15 @@ export default function Navbar({ vendors }: NavbarProps) {
   const isHomepage = pathname === "/";
 
   return (
-    <header className="relative sticky top-0 pt-1 pb-4 z-50 bg-background">
+    <header className="relative sticky top-0 pt-3 pb-4 z-50 bg-background">
       <nav className="w-full px-6 md:px-10 h-16 grid grid-cols-3 items-center">
-        {/* Left — homepage: newsletter link · in-site: hamburger (mobile) +
+        {/* Left — homepage: newsletter link (desktop only) · in-site: hamburger (mobile) +
             nav links (desktop). */}
         <div className="flex items-center gap-4 justify-self-start">
           {isHomepage ? (
             <Link
               href="/newsletter"
-              className="font-script text-4xl hover:text-foreground/70 transition-colors"
+              className="hidden sm:block font-script text-4xl hover:text-foreground/70 transition-colors"
             >
               newsletter
             </Link>
