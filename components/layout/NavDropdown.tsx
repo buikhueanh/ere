@@ -23,7 +23,7 @@ export default function NavDropdown({ items, pathname }: NavDropdownProps) {
   const [hovered, setHovered] = useState<string | null>(null);
 
   return (
-    <ul className="absolute bg-background left-0 top-full w-screen pb-6 px-6 md:px-10 flex flex-col gap-2 whitespace-nowrap max-h-80 overflow-y-auto">
+    <ul className="absolute bg-background left-0 top-full w-screen pt-3 pb-6 px-6 md:px-10 flex flex-col gap-2 whitespace-nowrap max-h-80 overflow-y-auto">
       {items.map((item) => {
         const isMarked = hovered ? hovered === item.key : pathname === item.href;
         return (

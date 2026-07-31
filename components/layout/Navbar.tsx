@@ -37,6 +37,7 @@ export default function Navbar({ vendors }: NavbarProps) {
     setActiveDropdown(key);
   };
   const closeDropdown = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
     closeTimer.current = setTimeout(() => setActiveDropdown(null), 150);
   };
 
@@ -48,17 +49,17 @@ export default function Navbar({ vendors }: NavbarProps) {
   const isHomepage = pathname === "/";
 
   return (
-    <header className="relative sticky top-0 pt-3 pb-4 z-50 bg-background">
-      <nav className="w-full px-6 md:px-10 h-16 grid grid-cols-3 items-center">
+    <header className="sticky top-0 pt-3 pb-4 z-50 bg-background">
+      <nav className="relative w-full px-6 md:px-10 h-16 grid grid-cols-3 items-center">
         {/* Left — homepage: newsletter link (desktop only) · in-site: hamburger (mobile) +
             nav links (desktop). */}
         <div className="flex items-center gap-4 justify-self-start">
           {isHomepage ? (
             <Link
               href="/newsletter"
-              className="hidden sm:block font-script text-4xl hover:text-foreground/70 transition-colors"
+              className="hidden sm:block font-script text-3xl hover:text-foreground/70 transition-colors"
             >
-              newsletter
+              sign up
             </Link>
           ) : (
             <>
@@ -73,67 +74,60 @@ export default function Navbar({ vendors }: NavbarProps) {
                   <Menu size={18} strokeWidth={1.5} />
                 )}
               </button>
-              <ul className="hidden md:flex items-stretch gap-12">
-                {navLinks.map((link) => {
-                  const isShop = link.href === "/shop";
-                  const isBrands = link.href === "/brands";
-                  return (
-                    <li
-                      key={link.href}
-                      className="flex items-center"
-                      onMouseEnter={() =>
-                        isShop || isBrands ? openDropdown(link.href) : undefined
-                      }
-                      onMouseLeave={closeDropdown}
-                    >
-                      <Link
-                        href={link.href}
-                        className="font-script text-4xl text-foreground hover:text-foreground/60 transition-colors"
+              <div onMouseLeave={closeDropdown}>
+                <ul className="hidden md:flex items-stretch gap-12">
+                  {navLinks.map((link) => {
+                    const isShop = link.href === "/shop";
+                    const isBrands = link.href === "/brands";
+                    return (
+                      <li
+                        key={link.href}
+                        className="h-16 flex items-center"
+                        onMouseEnter={() => {
+                          if (isShop || isBrands) {
+                            openDropdown(link.href);
+                          } else {
+                            if (closeTimer.current)
+                              clearTimeout(closeTimer.current);
+                            setActiveDropdown(null);
+                          }
+                        }}
                       >
-                        {link.label}
-                      </Link>
-                      {isShop && activeDropdown === link.href && (
-                        <div
-                          onMouseEnter={() => openDropdown(link.href)}
-                          onMouseLeave={closeDropdown}
+                        <Link
+                          href={link.href}
+                          className="font-script text-3xl text-foreground hover:text-foreground/60 transition-colors"
                         >
-                          <NavDropdown
-                            items={shopDropdownItems}
-                            pathname={pathname}
-                          />
-                        </div>
-                      )}
-                      {isBrands &&
-                        vendors.length > 0 &&
-                        activeDropdown === link.href && (
-                          <div
-                            onMouseEnter={() => openDropdown(link.href)}
-                            onMouseLeave={closeDropdown}
-                          >
-                            <NavDropdown
-                              items={vendors.map((v) => ({
-                                key: v,
-                                label: v,
-                                href: `/brands/${encodeURIComponent(v)}`,
-                              }))}
-                              pathname={pathname}
-                            />
-                          </div>
-                        )}
-                    </li>
-                  );
-                })}
-              </ul>
+                          {link.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                {activeDropdown === "/shop" && (
+                  <NavDropdown items={shopDropdownItems} pathname={pathname} />
+                )}
+                {activeDropdown === "/brands" && vendors.length > 0 && (
+                  <NavDropdown
+                    items={vendors.map((v) => ({
+                      key: v,
+                      label: v,
+                      href: `/brands/${encodeURIComponent(v)}`,
+                    }))}
+                    pathname={pathname}
+                  />
+                )}
+              </div>
             </>
           )}
         </div>
 
         {/* Center — always the logo. justify-self-center keeps it centered
-              regardless of left/right content width. On the homepage it links to New In; everywhere else it links back home */}
+        regardless of left/right content width. On the homepage it links to New In; everywhere else it links back home */}
         <Link
           href={isHomepage ? "/new-in" : "/"}
           aria-label={isHomepage ? "New In" : "Home"}
-          className="relative block w-24 h-8 justify-self-center"
+          className="relative block w-21 h-7 justify-self-center"
         >
           <Image
             src="/images/logo-ere.png"
@@ -190,9 +184,9 @@ export default function Navbar({ vendors }: NavbarProps) {
             return (
               <div key={link.href} className="w-full">
                 {/* w-full + justify-between on every row means the +/-
-                    button always lands at the same right-hand x position,
-                    so shop's and brands' toggles line up vertically even
-                    though their labels are different widths. */}
+                button always lands at the same right-hand x position,
+                so shop's and brands' toggles line up vertically even
+                though their labels are different widths. */}
                 <div className="flex items-center justify-between w-full">
                   <Link
                     href={link.href}
