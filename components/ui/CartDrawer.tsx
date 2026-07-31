@@ -40,20 +40,20 @@ export default function CartDrawer() {
       {/* Panel — width breakpoints live here:
           phones: full width · small tablets: 85vw · laptops+: 1/3 viewport */}
       <aside
-        aria-label="Shopping bag"
+        aria-label="shopping bag"
         className={`fixed top-0 right-0 z-50 h-full w-full sm:w-[85vw] md:w-1/3 bg-background flex flex-col transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 h-16 border-b border-border shrink-0">
-          <p className="text-xs tracking-widest uppercase">
+          <p className="lowercase text-xs leading-none text-foreground/70 hover:text-foreground transition-colors">
             Shopping Bag{cart && cart.totalQuantity > 0 ? ` (${cart.totalQuantity})` : ''}
           </p>
           <button
             onClick={closeCart}
             aria-label="Close cart"
-            className="text-foreground/70 hover:text-foreground transition-colors"
+            className="lowercase text-xs leading-none text-foreground/70 hover:text-foreground transition-colors"
           >
             <X size={18} strokeWidth={1.5} />
           </button>
@@ -61,11 +61,11 @@ export default function CartDrawer() {
 
         {isEmpty ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-6 px-6">
-            <p className="text-sm text-muted">Your bag is empty</p>
+            <p className="lowercase text-xs leading-none text-foreground/70">Your bag is empty</p>
             <Link
               href="/shop"
               onClick={closeCart}
-              className="text-xs tracking-widest uppercase underline underline-offset-4 hover:text-foreground/60 transition-colors"
+              className="lowercase underline text-xs leading-none text-foreground hover:text-foreground/70 transition-colors"
             >
               Continue Shopping
             </Link>
@@ -97,7 +97,7 @@ export default function CartDrawer() {
 
             {/* Footer */}
             <div className="border-t border-border px-6 py-5 shrink-0 space-y-4">
-              <div className="flex items-center justify-between text-xs tracking-widest uppercase">
+              <div className="flex items-center justify-between lowercase text-xs leading-none text-foreground/70">
                 <span>Subtotal</span>
                 <span>
                   {cart &&
@@ -107,10 +107,10 @@ export default function CartDrawer() {
                     )}
                 </span>
               </div>
-              <p className="text-xs text-muted">Shipping and taxes calculated at checkout.</p>
+              <p className="lowercase text-xs leading-none text-muted">Shipping and taxes calculated at checkout.</p>
               <a
                 href={cart?.checkoutUrl ?? '#'}
-                className="block w-full bg-foreground text-background text-center text-xs tracking-widest uppercase py-4 hover:bg-foreground/90 transition-colors"
+                className="block w-full bg-foreground text-background text-center text-xs tracking-widest lowercase py-4 hover:bg-foreground/90 transition-colors"
               >
                 Checkout
               </a>
@@ -167,7 +167,7 @@ function CartLineItem({
           <Link
             href={`/products/${merchandise.product.handle}`}
             onClick={onClose}
-            className="text-xs tracking-widest uppercase hover:text-foreground/60 transition-colors"
+            className="lowercase text-xs leading-none text-foreground/70 hover:text-foreground transition-colors"
           >
             {merchandise.product.title}
           </Link>
@@ -180,7 +180,7 @@ function CartLineItem({
           </button>
         </div>
 
-        {variantLabel && <p className="text-xs text-muted mt-1">{variantLabel}</p>}
+        {variantLabel && <p className="lowercase text-xs leading-none text-muted mt-1">{variantLabel}</p>}
 
         <div className="flex items-end justify-between mt-auto pt-3">
           {/* Quantity stepper */}
