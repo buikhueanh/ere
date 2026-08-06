@@ -84,12 +84,12 @@ export default function NewsletterSignup({
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="enter your email"
                 aria-label="Email address"
-                className="flex-1 border border-foreground border-r-0 px-4 py-3 text-xs placeholder:text-muted focus:outline-none focus:border-foreground"
+                className="flex-1 border border-input-fill border-r-0 px-4 py-3 text-xs placeholder:text-muted focus:outline-none focus:border-foreground"
               />
               <button
                 type="submit"
                 disabled={status === 'submitting'}
-                className="border border-foreground text-foreground px-6 py-3 text-xs tracking-widest lowercase hover:bg-foreground/90 hover:text-background transition-colors disabled:opacity-60"
+                className=" bg-input-fill border border border-input-fill text-foreground px-6 py-3 text-xs tracking-widest lowercase hover:bg-foreground/90 hover:text-background transition-colors disabled:opacity-60"
               >
                 {status === 'submitting' ? 'Signing up…' : 'Sign Up'}
               </button>

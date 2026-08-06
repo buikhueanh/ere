@@ -9,12 +9,9 @@ export default function AboutPage() {
             About us
           </h1>
           <p>
-            ère is a curator and collector of beautiful things, an admirer of
-            life in its realest, rawest form, and a protector of stillness in an
-            overstimulated world. ère supports and uplifts emerging brands from
-            different corners of the world, introducing their stories and
-            ingenuity to customers in the united states. in the world of ère,
-            you belong, always.
+            ère curates clothing and objects from emerging brands around the
+            world, bringing their stories and creativity to the united states.
+            in the world of ère, you belong, always.
           </p>
           <br />
           <br />

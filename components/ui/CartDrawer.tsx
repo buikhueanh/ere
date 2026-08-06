@@ -107,7 +107,7 @@ export default function CartDrawer() {
                     )}
                 </span>
               </div>
-              <p className="lowercase text-xs leading-none text-muted">Shipping and taxes calculated at check out.</p>
+              <p className="lowercase text-xs leading-none text-muted">Taxes and shipping calculated at check out.</p>
               <a
                 href={cart?.checkoutUrl ?? '#'}
                 className="block w-full bg-background border border-foreground text-foreground text-center text-xs tracking-widest lowercase py-4 hover:bg-foreground/90 hover:text-background transition-colors"

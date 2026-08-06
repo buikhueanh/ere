@@ -1,23 +1,55 @@
-import Link from 'next/link';
-import { supportLinks } from '@/config/navigation';
+"use client";
 
-// Customer care hub (decision 010 §3): the footer's "customer care" link
-// lands here and fans out to the individual support pages.
+import { useState } from "react";
+import { Plus, Minus } from "lucide-react";
+import { supportSections } from "@/config/customerCareSections";
+
+// Customer care hub (decision 010 §3): sections expand in place rather than
+// linking out to separate pages.
 export default function CustomerCarePage() {
+  const [openLabel, setOpenLabel] = useState<string | null>(null);
+
   return (
     <div className="px-6 mx-auto py-24 max-w-lg">
-      <h1 className="font-handwriting italic lowercase text-3xl mb-3">Customer care</h1>
-      <ul className="divide-y divide-border border-y border-border">
-        {supportLinks.map((link) => (
-          <li key={link.href}>
-            <Link
-              href={link.href}
-              className="block lowercase py-4 text-xs leading-none text-foreground/70 hover:text-foreground transition-colors"
-            >
-              {link.label}
-            </Link>
-          </li>
-        ))}
+      <h1 className="font-handwriting italic lowercase text-xl mb-3">
+        Customer care
+      </h1>
+      <div className="text-xs lowercase flex gap-1">
+        <p>we are here to help. for customer service and orders, contact</p>
+        <a
+          href="mailto:contact@ere-world.com"
+          className="hover:text-foreground/70 transition-colors"
+        >
+          customerservice@ere-world.com
+        </a>
+        <br />
+        <br />
+      </div>
+
+      <ul>
+        {supportSections.map((section) => {
+          const isOpen = openLabel === section.label;
+          return (
+            <li key={section.label}>
+              <button
+                onClick={() => setOpenLabel(isOpen ? null : section.label)}
+                className="w-full flex items-center gap-2 py-4 text-xs font-semibold uppercase leading-none text-foreground"
+              >
+                {isOpen ? (
+                  <Minus size={12} strokeWidth={1.5} />
+                ) : (
+                  <Plus size={12} strokeWidth={1.5} />
+                )}
+                <span>{section.label}</span>
+              </button>
+              {isOpen && (
+                <div className="pb-4 pl-5 lowercase text-xs leading-relaxed text-foreground/70">
+                  {section.content}
+                </div>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
