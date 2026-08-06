@@ -49,7 +49,7 @@ export default function Navbar({ vendors }: NavbarProps) {
   const isHomepage = pathname === "/";
 
   return (
-    <header className="sticky top-0 pt-3 pb-4 z-50 bg-background">
+    <header className="sticky top-0 z-50 bg-background">
       <nav className="relative w-full px-6 md:px-10 h-16 grid grid-cols-3 items-center">
         {/* Left — homepage: newsletter link (desktop only) · in-site: hamburger (mobile) +
             nav links (desktop). */}

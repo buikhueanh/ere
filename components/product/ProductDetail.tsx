@@ -57,8 +57,9 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
   const { title, descriptionHtml, vendor, priceRange, variants, collections, metafields } = product;
 
   const firstColor = variants.nodes[0]?.selectedOptions.find((o) => o.name === 'Color')?.value ?? null;
+  const firstSize = variants.nodes[0]?.selectedOptions.find((o) => o.name === 'Size')?.value ?? null;
   const [selectedColor, setSelectedColor] = useState<string | null>(firstColor);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(firstSize);
   const [galleryImages, setGalleryImages] = useState(product.images.nodes);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
 
