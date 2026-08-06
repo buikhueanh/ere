@@ -67,8 +67,8 @@ export default function NewsletterSignup({
           is present, instead of one-off top/bottom margins per element. */}
       <div className="w-full md:w-1/2 max-w-xl flex flex-col gap-4">
         <div className="flex flex-col gap-3">
-          <h2 className="font-handwriting italic text-3xl">{headline}</h2>
-          <p className="text-xs text-foreground leading-normal">{subtext}</p>
+          <h2 className="font-handwriting italic text-3xl pb-0">{headline}</h2>
+          <p className="text-xs text-foreground leading-none">{subtext}</p>
         </div>
 
         {status === 'success' ? (
@@ -76,7 +76,7 @@ export default function NewsletterSignup({
             thank you - you&apos;re on the list.
           </p>
         ) : (
-          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4 pt-2">
             <div className="flex">
               <input
                 type="email"
@@ -84,12 +84,12 @@ export default function NewsletterSignup({
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="enter your email"
                 aria-label="Email address"
-                className="flex-1 border border-border border-r-0 px-4 py-3 text-xs placeholder:text-muted focus:outline-none focus:border-foreground"
+                className="flex-1 border border-foreground border-r-0 px-4 py-3 text-xs placeholder:text-muted focus:outline-none focus:border-foreground"
               />
               <button
                 type="submit"
                 disabled={status === 'submitting'}
-                className="bg-foreground text-background px-6 py-3 text-xs tracking-widest lowercase hover:bg-foreground/90 transition-colors disabled:opacity-60"
+                className="border border-foreground text-foreground px-6 py-3 text-xs tracking-widest lowercase hover:bg-foreground/90 hover:text-background transition-colors disabled:opacity-60"
               >
                 {status === 'submitting' ? 'Signing up…' : 'Sign Up'}
               </button>
@@ -97,7 +97,7 @@ export default function NewsletterSignup({
             {status === 'error' && (
               <p className="text-base text-foreground/70">{errorMessage}</p>
             )}
-            <p className="text-xs text-foreground lowercase">
+            <p className="text-xs text-foreground lowercase pt-2">
               By signing up, you agree to receive email updates from ère and
               acknowledge our privacy policy, Unsubscribe anytime.
             </p>

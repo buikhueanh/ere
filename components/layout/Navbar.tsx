@@ -49,15 +49,15 @@ export default function Navbar({ vendors }: NavbarProps) {
   const isHomepage = pathname === "/";
 
   return (
-    <header className="sticky top-0 z-50 pb-2 bg-background">
-      <nav className="relative w-full px-6 md:px-10 h-16 grid grid-cols-3 items-center">
+    <header className="sticky top-0 z-50 bg-background">
+     <nav className="relative w-full px-6 md:px-10 h-15 pb-2 grid grid-cols-3 items-center">
         {/* Left — homepage: newsletter link (desktop only) · in-site: hamburger (mobile) +
             nav links (desktop). */}
         <div className="flex items-center gap-4 justify-self-start">
           {isHomepage ? (
             <Link
               href="/newsletter"
-              className="hidden sm:block font-script text-3xl hover:text-foreground/70 transition-colors"
+              className="hidden sm:block font-script text-3xl leading-none hover:text-foreground/70 transition-colors"
             >
               sign up
             </Link>
@@ -74,7 +74,7 @@ export default function Navbar({ vendors }: NavbarProps) {
                   <Menu size={18} strokeWidth={1.5} />
                 )}
               </button>
-              <div onMouseLeave={closeDropdown}>
+              <div onMouseLeave={closeDropdown} className="h-14 flex items-center">
                 <ul className="hidden md:flex items-stretch gap-12">
                   {navLinks.map((link) => {
                     const isShop = link.href === "/shop";
@@ -82,7 +82,7 @@ export default function Navbar({ vendors }: NavbarProps) {
                     return (
                       <li
                         key={link.href}
-                        className="h-16 flex items-center"
+                        className="h-full flex items-center"
                         onMouseEnter={() => {
                           if (isShop || isBrands) {
                             openDropdown(link.href);
@@ -95,7 +95,7 @@ export default function Navbar({ vendors }: NavbarProps) {
                       >
                         <Link
                           href={link.href}
-                          className="font-script text-3xl text-foreground hover:text-foreground/60 transition-colors"
+                          className="font-script text-3xl leading-none text-foreground hover:text-foreground/60 transition-colors"
                         >
                           {link.label}
                         </Link>
