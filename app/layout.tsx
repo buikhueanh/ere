@@ -66,6 +66,12 @@ export default async function RootLayout({
         <CartProvider>
           <Navbar vendors={vendors} />
           <main className='flex-1'>{children}</main>
+           {/* Scroll buffer taller than the sticky navbar (~84px) so that on
+              short pages the last pre-footer content (e.g. shop's page
+              selector) can scroll fully behind the navbar before the
+              document hits its max scroll — otherwise it's left peeking out
+              beneath it. */}
+          <div aria-hidden className="h-4 shrink-0" />
           <Footer />
           <CartDrawer />
         </CartProvider>

@@ -15,13 +15,13 @@ export default function PageSelector({ currentPage, totalPages, basePath }: Page
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <nav aria-label="Pagination" className="flex items-center justify-center gap-5 mt-16">
+    <nav aria-label="Pagination" className="flex items-center justify-center gap-5 mt-10 pt-0">
       {pages.map((page) => (
         <Link
           key={page}
           href={page === 1 ? basePath : `${basePath}?page=${page}`}
           aria-current={page === currentPage ? 'page' : undefined}
-          className={`text-sm w-6 text-center transition-colors ${
+          className={`text-xs w-6 text-center transition-colors ${
             page === currentPage
               ? 'text-foreground underline underline-offset-4'
               : 'text-muted hover:text-foreground'

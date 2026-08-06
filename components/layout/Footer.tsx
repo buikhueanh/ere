@@ -9,7 +9,7 @@ const [aboutUsLink, customerCareLink] = footerLinks;
 // (homepage/about/other), now unified.
 export default function Footer() {
   return (
-    <footer className="w-full bottom-0 pb-5 px-6 md:px-10 py-6 grid grid-cols-3 items-end gap-6">
+    <footer className="w-full bottom-0 px-6 md:px-10 py-4 grid grid-cols-3 items-end gap-6">
       <Link
         href={aboutUsLink.href}
         className="text-xs leading-none text-foreground/70 hover:text-foreground transition-colors justify-self-start"
