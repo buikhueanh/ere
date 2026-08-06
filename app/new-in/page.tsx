@@ -3,6 +3,7 @@ import { paginate } from '@/lib/pagination';
 import ProductGrid from '@/components/product/ProductGrid';
 import PageSelector from '@/components/ui/PageSelector';
 import NewsletterSignup from '@/components/ui/NewsletterSignup';
+import DiscountPopup from '@/components/ui/DiscountPopup';
 
 export const metadata = { title: 'New In' };
 
@@ -26,6 +27,7 @@ export default async function NewInPage({ searchParams }: NewInPageProps) {
 
   return (
     <main className="px-6 md:px-10 py-12">
+      <DiscountPopup />
       <h1 className="text-xs mb-5">new in</h1>
       <ProductGrid products={items} />
       <PageSelector currentPage={currentPage} totalPages={totalPages} basePath="/new-in" />

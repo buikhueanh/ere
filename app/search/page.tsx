@@ -9,7 +9,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
   return (
     <main className="px-6 py-24">
-      <h1 className="font-serif text-6xl mb-12">
+      <h1 className="font-serif text-xs mb-5 lowercase">
         {q ? `Results for "${q}"` : 'Search'}
       </h1>
     </main>

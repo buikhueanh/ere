@@ -34,7 +34,7 @@ export default function Footer() {
         <span
           id="tooltip"
           role="tooltip"
-          className="pointer-events-none absolute bottom-full right-0 mb-2 whitespace-nowrap border border-foreground/70 px-2 py-1 text-xs leading-none text-foreground/70 opacity-0 transition-opacity group-hover:opacity-100"
+          className="pointer-events-none absolute bottom-full right-0 mb-2 whitespace-nowrap border border-input-fill px-2 py-1 text-xs leading-none text-foreground/70 opacity-0 transition-opacity group-hover:opacity-100"
         >
           developed by anh bui
         </span>

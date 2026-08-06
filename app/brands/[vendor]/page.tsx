@@ -29,7 +29,7 @@ export default async function VendorPage({ params }: VendorPageProps) {
 
   return (
     <main className="px-6 md:px-10 py-12">
-      <h1 className="text-base mb-5 lowercase">{vendor}</h1>
+      <h1 className="text-xs mb-5 lowercase">{vendor}</h1>
       <ProductGrid products={products} />
     </main>
   );
