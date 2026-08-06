@@ -30,10 +30,10 @@ export default function AddToCartButton({ variantId }: AddToCartButtonProps) {
       className={`w-full py-4 text-xs lowercase leading-none transition-colors
         ${disabled
           ? 'bg-input-fill text-foreground cursor-not-allowed'
-          : 'bg-foreground text-background hover:bg-foreground/80'
+          : 'bg-background border border-foreground text-foreground hover:bg-foreground/80 hover:text-background'
         }`}
     >
-      {loading ? 'Adding...' : 'Add to Shopping Bag'}
+      {loading ? 'Adding...' : 'Add to Cart'}
     </button>
   );
 }

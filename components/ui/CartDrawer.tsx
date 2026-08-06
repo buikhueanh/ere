@@ -40,7 +40,7 @@ export default function CartDrawer() {
       {/* Panel — width breakpoints live here:
           phones: full width · small tablets: 85vw · laptops+: 1/3 viewport */}
       <aside
-        aria-label="shopping bag"
+        aria-label="cart"
         className={`fixed top-0 right-0 z-50 h-full w-full sm:w-[85vw] md:w-1/3 bg-background flex flex-col transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
@@ -48,7 +48,7 @@ export default function CartDrawer() {
         {/* Header */}
         <div className="flex items-center justify-between px-6 h-16 border-b border-border shrink-0">
           <p className="lowercase text-xs leading-none text-foreground/70 hover:text-foreground transition-colors">
-            Shopping Bag{cart && cart.totalQuantity > 0 ? ` (${cart.totalQuantity})` : ''}
+            cart{cart && cart.totalQuantity > 0 ? ` (${cart.totalQuantity})` : ''}
           </p>
           <button
             onClick={closeCart}
@@ -61,7 +61,7 @@ export default function CartDrawer() {
 
         {isEmpty ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-6 px-6">
-            <p className="lowercase text-xs leading-none text-foreground/70">Your bag is empty</p>
+            <p className="lowercase text-xs leading-none text-foreground/70">Your cart is empty</p>
             <Link
               href="/shop"
               onClick={closeCart}
@@ -107,12 +107,12 @@ export default function CartDrawer() {
                     )}
                 </span>
               </div>
-              <p className="lowercase text-xs leading-none text-muted">Shipping and taxes calculated at checkout.</p>
+              <p className="lowercase text-xs leading-none text-muted">Shipping and taxes calculated at check out.</p>
               <a
                 href={cart?.checkoutUrl ?? '#'}
-                className="block w-full bg-foreground text-background text-center text-xs tracking-widest lowercase py-4 hover:bg-foreground/90 transition-colors"
+                className="block w-full bg-background border border-foreground text-foreground text-center text-xs tracking-widest lowercase py-4 hover:bg-foreground/90 hover:text-background transition-colors"
               >
-                Checkout
+                Check out
               </a>
             </div>
           </>
