@@ -71,7 +71,7 @@ export default async function RootLayout({
               selector) can scroll fully behind the navbar before the
               document hits its max scroll — otherwise it's left peeking out
               beneath it. */}
-          <div aria-hidden className="h-5 shrink-0" />
+          <div aria-hidden className="h-4 shrink-0" />
           <Footer />
           <CartDrawer />
         </CartProvider>
