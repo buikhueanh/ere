@@ -74,7 +74,13 @@ export default function Navbar({ vendors }: NavbarProps) {
                   <Menu size={18} strokeWidth={1.5} />
                 )}
               </button>
-              <div onMouseLeave={closeDropdown} className="h-14 flex items-center">
+              <div
+                onMouseEnter={() => {
+                  if (closeTimer.current) clearTimeout(closeTimer.current);
+                }}
+                onMouseLeave={closeDropdown}
+                className="h-14 flex items-center"
+              >
                 <ul className="hidden md:flex items-stretch gap-12">
                   {navLinks.map((link) => {
                     const isShop = link.href === "/shop";
