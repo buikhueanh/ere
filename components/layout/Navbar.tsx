@@ -49,7 +49,7 @@ export default function Navbar({ vendors }: NavbarProps) {
   const isHomepage = pathname === "/";
 
   return (
-    <header className="sticky top-0 z-50 bg-background">
+    <header className="sticky top-0 z-50 pb-2 bg-background">
       <nav className="relative w-full px-6 md:px-10 h-16 grid grid-cols-3 items-center">
         {/* Left — homepage: newsletter link (desktop only) · in-site: hamburger (mobile) +
             nav links (desktop). */}
@@ -127,7 +127,7 @@ export default function Navbar({ vendors }: NavbarProps) {
         <Link
           href={isHomepage ? "/new-in" : "/"}
           aria-label={isHomepage ? "New In" : "Home"}
-          className="relative block w-21 h-7 justify-self-center"
+          className="relative block w-18 h-6 justify-self-center"
         >
           <Image
             src="/images/logo-ere.png"
