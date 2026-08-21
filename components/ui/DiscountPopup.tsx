@@ -164,7 +164,7 @@ export default function DiscountPopup() {
           {/* Copy + form */}
           <div className="w-full md:w-1/2 flex flex-col items-center justify-center text-center gap-5 px-8 py-12">
             <h2 className="font-handwriting italic text-2xl lowercase -mb-2">
-              welcome to ère.
+              welcome to ère
             </h2>
             <p className="text-xs text-foreground leading-relaxed">
               sign up for our newsletter and enjoy <br className="hidden md:inline" /> 10% off your first purchase.
