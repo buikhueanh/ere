@@ -9,7 +9,7 @@ interface HeroCarouselProps {
   alt: string;
 }
 
-const TRANSITION_INTERVAL_MS = 5000;
+const TRANSITION_INTERVAL_MS = 60000;
 
 // Auto-advancing sliding carousel for the homepage hero — no arrows, no
 // dots, loops indefinitely, always moves left-to-right: the current image
@@ -70,7 +70,7 @@ export default function HeroCarousel({ images, alt }: HeroCarouselProps) {
           initial={{ x: '-100%' }}
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
-          transition={{ duration: 2 }}
+          transition={{ duration: 10 }}
           className="absolute inset-0"
         >
           <Image

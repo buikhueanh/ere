@@ -1,5 +1,16 @@
 import type { ReactNode } from "react";
 
+// Deep-links a support section from elsewhere (e.g. the checkout terms
+// checkbox) via /customer-care?section=<slug>, matched against this in the
+// page. Kept alongside supportSections so a label change can't silently
+// break a link — everyone importing supportSections has this too.
+export function slugifyLabel(label: string): string {
+  return label
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 // Customer care accordion sections (label + body). Shipping has real policy
 // copy; the rest are placeholders — swap in real text before launch.
 export const supportSections: { label: string; content: ReactNode }[] = [
@@ -18,7 +29,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Order Processing
           </p>
           <p>
@@ -37,7 +48,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Shipping Within The United States
           </p>
           <p>
@@ -50,7 +61,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Complimentary U.S. Shipping
           </p>
           <p>
@@ -71,7 +82,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Tracking Your Order
           </p>
           <p>
@@ -82,7 +93,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Shipping Addresses
           </p>
           <p>
@@ -97,7 +108,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Delivery Estimates
           </p>
           <p>
@@ -109,7 +120,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Missing Or Damaged Shipments
           </p>
           <p>please contact us promptly if your package:</p>
@@ -151,7 +162,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Return Period
           </p>
           <p>
@@ -169,7 +180,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Refund Policy
           </p>
           <p>
@@ -193,7 +204,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Store Credit
           </p>
           <p>
@@ -210,7 +221,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             General Return Conditions
           </p>
           <p>to qualify for an exchange or store credit, an item must be:</p>
@@ -239,7 +250,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Return Shipping
           </p>
           <p>
@@ -261,7 +272,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Final-Sale Purchases
           </p>
           <p>
@@ -284,7 +295,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Face Masks & Face Coverings
           </p>
           <p>
@@ -294,7 +305,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Self-Care Products
           </p>
           <p>
@@ -304,7 +315,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Sexual-Wellness Toys
           </p>
           <p>
@@ -314,7 +325,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Intimate Apparel & Swimwear
           </p>
           <p>
@@ -324,7 +335,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Dangerous Goods
           </p>
           <p>
@@ -341,7 +352,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Damaged, Defective, Or Incorrect Products
           </p>
           <p>
@@ -362,7 +373,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Rejected Returns
           </p>
           <p>
@@ -391,7 +402,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Frequent Or Abusive Returns
           </p>
           <p>
@@ -416,7 +427,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Purchases From Other Sellers
           </p>
           <p>
@@ -447,7 +458,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Eligibility
           </p>
           <p>
@@ -462,7 +473,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Product Information
           </p>
           <p>
@@ -477,7 +488,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Orders
           </p>
           <p>all orders are subject to:</p>
@@ -509,7 +520,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Pricing And Payment
           </p>
           <p>
@@ -530,7 +541,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Shipping, Returns, And Exchanges
           </p>
           <p>
@@ -542,7 +553,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Customer Accounts
           </p>
           <p>you are responsible for:</p>
@@ -561,7 +572,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Product Care And Use
           </p>
           <p>
@@ -586,7 +597,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Website Content And Intellectual Property
           </p>
           <p>
@@ -611,7 +622,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Reviews And Customer Content
           </p>
           <p>
@@ -640,7 +651,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Prohibited Uses
           </p>
           <p>you may not use our website or services to:</p>
@@ -667,7 +678,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Third-Party Services
           </p>
           <p>
@@ -682,7 +693,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Website Availability
           </p>
           <p>
@@ -697,7 +708,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Disclaimer And Limitation Of Liability
           </p>
           <p>
@@ -720,7 +731,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Governing Law
           </p>
           <p>
@@ -735,7 +746,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Changes To These Terms
           </p>
           <p>
@@ -747,7 +758,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Contact
           </p>
           <p>
@@ -786,7 +797,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Information We Collect
           </p>
           <p>we may collect information you provide directly, including:</p>
@@ -826,7 +837,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             How We Use Information
           </p>
           <p>we may use personal information to:</p>
@@ -847,7 +858,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             How We Disclose Information
           </p>
           <p>
@@ -873,7 +884,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Cookies And Similar Technologies
           </p>
           <p>we may use cookies and similar technologies to:</p>
@@ -895,7 +906,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Analytics And Advertising
           </p>
           <p>
@@ -932,7 +943,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Marketing Communications
           </p>
           <p>
@@ -952,7 +963,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Privacy Rights
           </p>
           <p>
@@ -992,7 +1003,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Data Retention
           </p>
           <p>
@@ -1017,7 +1028,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Information Security
           </p>
           <p>
@@ -1030,7 +1041,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Children&apos;s Privacy
           </p>
           <p>
@@ -1049,7 +1060,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Third-Party Links
           </p>
           <p>
@@ -1061,7 +1072,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Changes To This Privacy Policy
           </p>
           <p>
@@ -1073,7 +1084,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
         </div>
 
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Contact
           </p>
           <p>
@@ -1106,7 +1117,7 @@ export const supportSections: { label: string; content: ReactNode }[] = [
     content: (
       <div className="space-y-4">
         <div>
-          <p className="font-semibold uppercase tracking-wide text-foreground mb-1">
+          <p className="uppercase tracking-wide text-foreground mb-1">
             Preorder
           </p>
           <p>

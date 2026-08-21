@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useRef, useState, FormEvent } from 'react';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 import { joinNewsletter } from '@/lib/shopify/customer';
@@ -9,37 +10,75 @@ import { isValidEmail } from '@/lib/newsletter';
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
 // Session-scoped so it re-triggers on a fresh visit but not on every page
-// load — mounted on /shop and /new-in only; auto-opens once when arriving
-// from the homepage, then collapses to the side tab for the rest of the
-// session (decision: quick-fix spec, 2026-08-06).
-const SESSION_KEY = 'ere-discount-popup-seen';
+// load — mounted on /shop and /new-in only; each page gets its own one-time
+// auto-open the first time it's visited this session, regardless of how the
+// user got there, then collapses to the side tab for the rest of the
+// session (decision: quick-fix spec, 2026-08-21).
+const SESSION_KEY_PREFIX = 'ere-discount-popup-seen:';
+
+// DiscountPopup is a separate component instance on each page (/shop,
+// /new-in), so `status`/`email` local state doesn't survive navigating
+// between them — without this flag, a user who already signed up on one
+// page would see a fresh blank form (and could submit a different email)
+// the moment they land on the other page.
+const SUBSCRIBED_KEY = 'ere-discount-popup-subscribed';
+
+// How long the collapsed tab stays fully out before tucking away to an
+// 8px sliver (kept as a literal Tailwind class below, not this constant,
+// since arbitrary-value classes must be static strings for the compiler
+// to pick up).
+const TAG_IDLE_MS = 3000;
 
 export default function DiscountPopup() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [hasOpenedOnce, setHasOpenedOnce] = useState(false);
+  const [isTagPeeking, setIsTagPeeking] = useState(false);
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<Status>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const peekTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function schedulePeek() {
+    if (peekTimer.current) clearTimeout(peekTimer.current);
+    peekTimer.current = setTimeout(() => setIsTagPeeking(true), TAG_IDLE_MS);
+  }
+
+  // Tag reappears fully visible whenever it's (re)shown, then tucks away to
+  // a sliver after a few idle seconds — hovering brings it back out.
+  useEffect(() => {
+    if (!hasOpenedOnce || isOpen) {
+      setIsTagPeeking(false);
+      return;
+    }
+    setIsTagPeeking(false);
+    schedulePeek();
+    return () => {
+      if (peekTimer.current) clearTimeout(peekTimer.current);
+    };
+  }, [hasOpenedOnce, isOpen]);
 
   useEffect(() => {
-    const alreadySeen = sessionStorage.getItem(SESSION_KEY);
+    if (sessionStorage.getItem(SUBSCRIBED_KEY) === 'true') {
+      setStatus('success');
+    }
 
-    // Already shown earlier this session (e.g. a reload, or navigating back
-    // to /new-in) — restore the collapsed tab instead of re-opening the
-    // modal. Without this, hasOpenedOnce resets to false on every remount
-    // and the tab never comes back at all.
+    const sessionKey = `${SESSION_KEY_PREFIX}${pathname}`;
+    const alreadySeen = sessionStorage.getItem(sessionKey);
+
+    // Already shown earlier this session on this page (e.g. a reload) —
+    // restore the collapsed tab instead of re-opening the modal. Without
+    // this, hasOpenedOnce resets to false on every remount and the tab
+    // never comes back at all.
     if (alreadySeen) {
       setHasOpenedOnce(true);
       return;
     }
 
-    const cameFromHomepage = sessionStorage.getItem('ere-visited-homepage') === 'true';
-    if (cameFromHomepage) {
-      sessionStorage.setItem(SESSION_KEY, 'true');
-      setIsOpen(true);
-      setHasOpenedOnce(true);
-    }
-  }, []);
+    sessionStorage.setItem(sessionKey, 'true');
+    setIsOpen(true);
+    setHasOpenedOnce(true);
+  }, [pathname]);
 
   function handleClose() {
     setIsOpen(false);
@@ -57,6 +96,7 @@ export default function DiscountPopup() {
     try {
       const result = await joinNewsletter(email.trim());
       if (result.ok) {
+        sessionStorage.setItem(SUBSCRIBED_KEY, 'true');
         setStatus('success');
       } else {
         setStatus('error');
@@ -88,7 +128,7 @@ export default function DiscountPopup() {
           isOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
         }`}
       >
-        <div className="relative w-full max-w-2xl bg-background flex flex-col md:flex-row shadow-xl">
+        <div className="relative w-full md:w-[650px] md:h-[450px] bg-background flex flex-col md:flex-row shadow-xl">
           <button
             onClick={handleClose}
             aria-label="Close"
@@ -110,11 +150,11 @@ export default function DiscountPopup() {
 
           {/* Copy + form */}
           <div className="w-full md:w-1/2 flex flex-col items-center justify-center text-center gap-5 px-8 py-12">
-            <h2 className="font-handwriting italic text-2xl lowercase">
+            <h2 className="font-handwriting italic text-2xl lowercase -mb-2">
               welcome to ère.
             </h2>
             <p className="text-xs text-foreground leading-relaxed">
-              sign up for our newsletter and enjoy 10% off your first purchase.
+              sign up for our newsletter and enjoy   <br />  10% off your first purchase.
             </p>
 
             {status === 'success' ? (
@@ -136,13 +176,14 @@ export default function DiscountPopup() {
                   disabled={status === 'submitting'}
                   className="w-full bg-foreground text-background px-6 py-3 text-xs tracking-widest lowercase hover:bg-foreground/90 transition-colors disabled:opacity-60"
                 >
-                  {status === 'submitting' ? 'signing up…' : 'get code'}
+                  {status === 'submitting' ? 'signing up…' : 'join now'}
                 </button>
                 {status === 'error' && (
                   <p className="text-xs text-foreground/70">{errorMessage}</p>
                 )}
               </form>
             )}
+
 
             <p className="text-xs italic text-foreground/60 leading-relaxed">
               *one-time use per customer. sale items purchased with this code
@@ -156,11 +197,20 @@ export default function DiscountPopup() {
       {/* Collapsed side tab */}
       <button
         onClick={() => setIsOpen(true)}
+        onMouseEnter={() => {
+          if (peekTimer.current) clearTimeout(peekTimer.current);
+          setIsTagPeeking(false);
+        }}
+        onMouseLeave={schedulePeek}
         aria-label="Open 10% off offer"
-        className={`fixed left-0 top-4/5 -translate-y-1/2 z-40 bg-input-fill px-2 py-3 text-xs tracking-widest uppercase transition-transform duration-300 ${
-          hasOpenedOnce && !isOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed right-0 top-9/10 -translate-y-1/2 z-40 bg-input-fill text-foreground px-2 py-3 text-xs tracking-widest uppercase transition-transform duration-300 ${
+          !hasOpenedOnce || isOpen
+            ? 'translate-x-full'
+            : isTagPeeking
+              ? 'translate-x-[calc(100%-8px)]'
+              : 'translate-x-0'
         }`}
-        style={{ writingMode: 'vertical-rl' }}
+        style={{ writingMode: 'vertical-lr' }}
       >
         10% off
       </button>
