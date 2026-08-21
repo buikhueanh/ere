@@ -55,7 +55,7 @@ export default function CartDrawer() {
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 h-16 border-b border-border shrink-0">
-          <p className="lowercase text-xs leading-none text-foreground/70 hover:text-foreground transition-colors">
+          <p className="uppercase text-xs leading-none text-foreground/70 hover:text-foreground transition-colors">
             cart{cart && cart.totalQuantity > 0 ? ` (${cart.totalQuantity})` : ''}
           </p>
           <button
@@ -73,7 +73,7 @@ export default function CartDrawer() {
             <Link
               href="/shop"
               onClick={closeCart}
-              className="lowercase underline text-xs leading-none text-foreground hover:text-foreground/70 transition-colors"
+              className="uppercase underline text-xs leading-none text-foreground hover:text-foreground/70 transition-colors"
             >
               Continue Shopping
             </Link>
@@ -105,7 +105,7 @@ export default function CartDrawer() {
 
             {/* Footer */}
             <div className="border-t border-border px-6 py-5 shrink-0 space-y-4">
-              <div className="flex items-center justify-between lowercase text-xs leading-none text-foreground/70">
+              <div className="flex items-center justify-between uppercase text-xs leading-none text-foreground/70">
                 <span>Subtotal</span>
                 <span>
                   {cart &&
@@ -124,8 +124,8 @@ export default function CartDrawer() {
                   onChange={(e) => setAgreedToTerms(e.target.checked)}
                   className="h-3 w-3 shrink-0 accent-foreground"
                 />
-                <span className="lowercase text-xs leading-snug text-foreground/70">
-                  I accept the{' '}
+                <span className="uppercase text-xs leading-snug text-foreground/70">
+                accept the{' '}
                   <Link
                     href={TERMS_HREF}
                     target="_blank"
@@ -152,7 +152,7 @@ export default function CartDrawer() {
                 onClick={(e) => {
                   if (!agreedToTerms) e.preventDefault();
                 }}
-                className={`block w-full border text-center text-xs tracking-widest lowercase py-4 transition-colors ${
+                className={`block uppercase w-full border text-center text-xs tracking-widest py-4 transition-colors ${
                   agreedToTerms
                     ? 'bg-background border-foreground text-foreground hover:bg-foreground/90 hover:text-background'
                     : 'bg-background border-border text-muted cursor-not-allowed'

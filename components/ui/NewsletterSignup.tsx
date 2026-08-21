@@ -72,7 +72,7 @@ export default function NewsletterSignup({
         </div>
 
         {status === 'success' ? (
-          <p className="text-base border border-border px-4 py-4">
+          <p className="text-xs border border-border px-4 py-4">
             thank you - you&apos;re on the list.
           </p>
         ) : (
@@ -84,18 +84,18 @@ export default function NewsletterSignup({
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="enter your email"
                 aria-label="Email address"
-                className="flex-1 border border-input-fill border-r-0 px-4 py-3 text-xs placeholder:text-muted focus:outline-none focus:border-foreground"
+                className="peer flex-1 border border-input-fill border-r-0 px-4 py-3 text-xs placeholder:text-muted focus:outline-none focus:border-foreground"
               />
               <button
                 type="submit"
                 disabled={status === 'submitting'}
-                className=" bg-input-fill border border border-input-fill text-foreground px-6 py-3 text-xs tracking-widest lowercase hover:bg-foreground/90 hover:text-background transition-colors disabled:opacity-60"
+                className="bg-input-fill border border-input-fill text-foreground px-6 py-3 text-xs tracking-widest uppercase hover:bg-foreground/90 hover:text-background transition-colors disabled:opacity-60 peer-focus:border-foreground"
               >
                 {status === 'submitting' ? 'Signing up…' : 'Sign Up'}
               </button>
             </div>
             {status === 'error' && (
-              <p className="text-base text-foreground/70">{errorMessage}</p>
+              <p className="text-xs text-foreground/70 lowercase">{errorMessage}</p>
             )}
             <p className="text-xs text-foreground lowercase pt-2">
               By signing up, you agree to receive email updates from ère and

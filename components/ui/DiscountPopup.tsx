@@ -29,6 +29,11 @@ const SUBSCRIBED_KEY = 'ere-discount-popup-subscribed';
 // to pick up).
 const TAG_IDLE_MS = 3000;
 
+// Delay before the first-visit auto-open, so the popup doesn't slam into
+// view the instant the page loads — it waits, then fades/scales in over
+// the existing 700ms transition.
+const AUTO_OPEN_DELAY_MS = 1200;
+
 export default function DiscountPopup() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -75,9 +80,17 @@ export default function DiscountPopup() {
       return;
     }
 
-    sessionStorage.setItem(sessionKey, 'true');
-    setIsOpen(true);
-    setHasOpenedOnce(true);
+    // Mark "seen" only once the popup actually opens, not when the open is
+    // merely scheduled — otherwise React's dev-mode double-effect-invoke
+    // (mount → cleanup → mount) marks the session seen on the first pass,
+    // gets its timer cleared before firing, and the second pass then finds
+    // "already seen" and bails out without ever opening the popup.
+    const timer = setTimeout(() => {
+      sessionStorage.setItem(sessionKey, 'true');
+      setIsOpen(true);
+      setHasOpenedOnce(true);
+    }, AUTO_OPEN_DELAY_MS);
+    return () => clearTimeout(timer);
   }, [pathname]);
 
   function handleClose() {
@@ -114,7 +127,7 @@ export default function DiscountPopup() {
       <div
         onClick={handleClose}
         aria-hidden={!isOpen}
-        className={`fixed inset-0 z-50 bg-foreground/20 transition-opacity duration-300 ${
+        className={`fixed inset-0 z-50 bg-foreground/20 transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       />
@@ -124,7 +137,7 @@ export default function DiscountPopup() {
         role="dialog"
         aria-modal="true"
         aria-hidden={!isOpen}
-        className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
+        className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           isOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
         }`}
       >
@@ -154,7 +167,7 @@ export default function DiscountPopup() {
               welcome to ère.
             </h2>
             <p className="text-xs text-foreground leading-relaxed">
-              sign up for our newsletter and enjoy   <br />  10% off your first purchase.
+              subscribe for our newsletter and enjoy <br className="hidden md:inline" /> 10% off your first purchase.
             </p>
 
             {status === 'success' ? (
@@ -167,14 +180,14 @@ export default function DiscountPopup() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email"
+                  placeholder="email"
                   aria-label="Email address"
                   className="w-full border border-foreground px-4 py-3 text-xs placeholder:text-muted focus:outline-none focus:border-foreground"
                 />
                 <button
                   type="submit"
                   disabled={status === 'submitting'}
-                  className="w-full bg-foreground text-background px-6 py-3 text-xs tracking-widest lowercase hover:bg-foreground/90 transition-colors disabled:opacity-60"
+                  className="w-full bg-foreground text-background px-6 py-3 text-xs tracking-widest uppercase hover:bg-foreground/90 transition-colors disabled:opacity-60"
                 >
                   {status === 'submitting' ? 'signing up…' : 'join now'}
                 </button>
