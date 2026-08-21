@@ -167,7 +167,7 @@ export default function DiscountPopup() {
               welcome to ère.
             </h2>
             <p className="text-xs text-foreground leading-relaxed">
-              subscribe for our newsletter and enjoy <br className="hidden md:inline" /> 10% off your first purchase.
+              sign up for our newsletter and enjoy <br className="hidden md:inline" /> 10% off your first purchase.
             </p>
 
             {status === 'success' ? (
@@ -198,10 +198,8 @@ export default function DiscountPopup() {
             )}
 
 
-            <p className="text-xs italic text-foreground/60 leading-relaxed">
-              *one-time use per customer. sale items purchased with this code
-              are final sale. no price adjustments on prior purchases. cannot
-              be redeemed for cash.
+            <p className="text-xs italic lowercase text-foreground/60 leading-relaxed">
+              *one-time use per customer.
             </p>
           </div>
         </div>

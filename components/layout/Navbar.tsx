@@ -103,7 +103,7 @@ export default function Navbar({ vendors }: NavbarProps) {
   return (
     <header
       className="sticky z-50 bg-background transition-[top] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
-      style={{ top: isHomepage && announcementVisible ? ANNOUNCEMENT_BAR_HEIGHT : 0 }}
+      style={{ top: announcementVisible ? ANNOUNCEMENT_BAR_HEIGHT : 0 }}
     >
      <nav className="relative w-full px-6 md:px-10 h-15 pb-2 grid grid-cols-3 items-center">
         {/* Left — homepage: newsletter link (desktop only) · in-site: hamburger (mobile) +
