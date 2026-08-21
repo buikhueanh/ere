@@ -12,14 +12,14 @@ export default function Footer() {
     <footer className="w-full bottom-0 px-6 md:px-10 py-4 grid grid-cols-3 items-end gap-6">
       <Link
         href={aboutUsLink.href}
-        className="text-xs leading-none text-foreground/70 hover:text-foreground transition-colors justify-self-start"
+        className="text-xs lowercase leading-none text-foreground/70 hover:text-foreground transition-colors justify-self-start"
       >
         {aboutUsLink.label}
       </Link>
 
       <Link
         href={customerCareLink.href}
-        className="text-xs leading-none text-foreground/70 hover:text-foreground transition-colors justify-self-center"
+        className="text-xs lowercase leading-none text-foreground/70 hover:text-foreground transition-colors justify-self-center"
       >
         {customerCareLink.label}
       </Link>

@@ -68,7 +68,7 @@ export default function AnnouncementBar() {
     return (
       <div className="relative w-full bg-input-fill px-10 py-2 text-center">
         <a href="/newsletter" className="text-xs text-foreground lowercase leading-none">
-          subcribe for your newsletter
+          subscribe for our newsletter!
         </a>
       </div>
     );
@@ -86,7 +86,7 @@ export default function AnnouncementBar() {
           visible ? "opacity-100" : "opacity-0"
         }`}
       >
-        subcribe for your newsletter
+        subscribe for our newsletter!
       </a>
     </div>
   );

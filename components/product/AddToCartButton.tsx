@@ -27,7 +27,7 @@ export default function AddToCartButton({ variantId }: AddToCartButtonProps) {
     <button
       onClick={handleClick}
       disabled={disabled}
-      className={`w-full py-4 text-xs lowercase leading-none transition-colors
+      className={`w-full py-4 text-xs uppercase leading-none transition-colors
         ${disabled
           ? 'bg-input-fill text-foreground cursor-not-allowed'
           : 'bg-background border border-foreground text-foreground hover:bg-foreground/80 hover:text-background'
