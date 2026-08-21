@@ -65,15 +65,14 @@ export default function AnnouncementBar() {
       style={{ height: visible ? ANNOUNCEMENT_BAR_HEIGHT : 0 }}
       className="sticky top-0 z-50 w-full overflow-hidden bg-input-fill transition-[height] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
     >
-      <a
-        href="/newsletter"
+      <p
         style={{ height: ANNOUNCEMENT_BAR_HEIGHT }}
         className={`flex items-center justify-center px-10 text-center text-xs text-foreground lowercase leading-none transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           visible ? "opacity-100" : "opacity-0"
         }`}
       >
-        sign up for our newsletter & enjoy 10% off your first order
-      </a>
+        free shipping for orders of $300+ within the united states
+      </p>
     </div>
   );
 }
