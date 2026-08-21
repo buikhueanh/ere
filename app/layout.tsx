@@ -70,7 +70,15 @@ export default async function RootLayout({
             <AnnouncementBar />
             <Navbar vendors={vendors} />
           </AnnouncementBarProvider>
-          <main className='flex-1'>{children}</main>
+          {/* flex flex-col (not just flex-1) so a page's root element can
+              use flex-1 itself to fill main's real height exactly — a plain
+              height:100% child wouldn't resolve, since a flex item's
+              flex-grow-derived height isn't a definite height for CSS
+              percentage-height purposes (only pages that need exact-fill,
+              like the homepage hero, rely on this; others are unaffected
+              since a single block child still renders at its natural
+              height either way). */}
+          <main className='flex-1 flex flex-col'>{children}</main>
            {/* Scroll buffer taller than the sticky navbar (~84px) so that on
               short pages the last pre-footer content (e.g. shop's page
               selector) can scroll fully behind the navbar before the

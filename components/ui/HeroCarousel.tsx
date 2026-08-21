@@ -78,7 +78,7 @@ export default function HeroCarousel({ images, alt }: HeroCarouselProps) {
             alt={alt}
             fill
             priority={step === 0}
-            className="object-contain"
+            className="object-cover"
             sizes="100vw"
           />
         </motion.div>
