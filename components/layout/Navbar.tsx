@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -8,7 +8,10 @@ import { Search, ShoppingBag, Menu, X, Plus, Minus } from "lucide-react";
 import { navLinks, footerLinks } from "@/config/navigation";
 import { shopCategories } from "@/config/shop-categories";
 import { useCartContext } from "@/context/CartProvider";
+import { useAnnouncementBar, ANNOUNCEMENT_BAR_HEIGHT } from "./AnnouncementBarContext";
 import NavDropdown from "./NavDropdown";
+import ProductGrid from "@/components/product/ProductGrid";
+import type { ShopifyProductCard } from "@/types/shopify.types";
 
 interface NavbarProps {
   vendors: string[];
@@ -27,10 +30,59 @@ export default function Navbar({ vendors }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<ShopifyProductCard[] | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const { cart, openCart } = useCartContext();
   const itemCount = cart?.totalQuantity ?? 0;
   const pathname = usePathname();
+  const { visible: announcementVisible } = useAnnouncementBar();
+
+  function closeSearch() {
+    setIsSearchOpen(false);
+    setSearchQuery("");
+    setSearchResults(null);
+  }
+
+  // Any navigation (e.g. clicking a result) should close the search
+  // overlay rather than leaving it open behind the new page. Reset during
+  // render (not an effect) per React's guidance for state that depends on
+  // a changed prop — avoids an extra commit/cascading-render.
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    closeSearch();
+  }
+
+  useEffect(() => {
+    if (isSearchOpen) searchInputRef.current?.focus();
+  }, [isSearchOpen]);
+
+  useEffect(() => {
+    if (!isSearchOpen) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") closeSearch();
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isSearchOpen]);
+
+  async function handleSearchSubmit(e: FormEvent) {
+    e.preventDefault();
+    const query = searchQuery.trim();
+    if (!query) return;
+    setIsSearching(true);
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      setSearchResults(data.products);
+    } finally {
+      setIsSearching(false);
+    }
+  }
 
   const openDropdown = (key: string) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -49,7 +101,10 @@ export default function Navbar({ vendors }: NavbarProps) {
   const isHomepage = pathname === "/";
 
   return (
-    <header className="sticky top-0 z-50 bg-background">
+    <header
+      className="sticky z-50 bg-background transition-[top] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+      style={{ top: isHomepage && announcementVisible ? ANNOUNCEMENT_BAR_HEIGHT : 0 }}
+    >
      <nav className="relative w-full px-6 md:px-10 h-15 pb-2 grid grid-cols-3 items-center">
         {/* Left — homepage: newsletter link (desktop only) · in-site: hamburger (mobile) +
             nav links (desktop). */}
@@ -145,13 +200,13 @@ export default function Navbar({ vendors }: NavbarProps) {
 
         {/* Right — actions */}
         <div className="flex items-center gap-5 justify-self-end">
-          <Link href="/search" aria-label="Search">
+          <button onClick={() => setIsSearchOpen(true)} aria-label="Search">
             <Search
               size={18}
               strokeWidth={1.5}
               className="text-foreground/70 hover:text-foreground transition-colors"
             />
-          </Link>
+          </button>
           <button onClick={openCart} aria-label="Cart" className="relative">
             <ShoppingBag
               size={18}
@@ -166,6 +221,45 @@ export default function Navbar({ vendors }: NavbarProps) {
           </button>
         </div>
       </nav>
+
+      {/* Search takeover — replaces the nav row in place so the header
+          height never changes, rather than pushing content down. */}
+      {isSearchOpen && (
+        <div className="absolute inset-x-0 top-0 z-10 h-15 pb-2 bg-background flex items-center gap-4 px-6 md:px-10">
+          <Search size={18} strokeWidth={1.5} className="text-foreground/50 shrink-0" />
+          <form onSubmit={handleSearchSubmit} className="flex-1">
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder=""
+              aria-label="Search products"
+              className="w-full bg-transparent text-sm lowercase text-foreground placeholder:text-muted focus:outline-none"
+            />
+          </form>
+          <button
+            onClick={closeSearch}
+            aria-label="Close search"
+            className="shrink-0 text-foreground/70 hover:text-foreground transition-colors"
+          >
+            <X size={18} strokeWidth={1.5} />
+          </button>
+        </div>
+      )}
+
+      {/* Search results panel */}
+      {isSearchOpen && searchResults !== null && (
+        <div className="absolute inset-x-0 top-full bg-background border-t border-border max-h-[70vh] overflow-y-auto px-6 md:px-10 py-8 shadow-lg">
+          {isSearching ? (
+            <p className="text-xs tracking-widest lowercase text-muted text-center py-12">
+              searching…
+            </p>
+          ) : (
+            <ProductGrid products={searchResults} />
+          )}
+        </div>
+      )}
 
       {/* Mobile menu overlay (in-site variant only) */}
       {!isHomepage && (

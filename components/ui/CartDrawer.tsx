@@ -7,12 +7,20 @@ import { X, Plus, Minus } from 'lucide-react';
 import { useCartContext } from '@/context/CartProvider';
 import { formatPrice } from '@/utils/formatPrice';
 import { canIncrement, getLineVariantLabel } from '@/lib/cart-helpers';
+import { supportSections, slugifyLabel } from '@/config/customerCareSections';
 import type { CartLine } from '@/types/cart.types';
+
+const termsSection = supportSections.find((s) => s.label === 'Term of Service');
+const TERMS_HREF = termsSection
+  ? `/customer-care?section=${slugifyLabel(termsSection.label)}`
+  : '/customer-care';
 
 export default function CartDrawer() {
   const { cart, isOpen, closeCart, removeItem, updateItem } = useCartContext();
   // Track which line is mid-mutation so we can disable its controls
   const [pendingLine, setPendingLine] = useState<string | null>(null);
+  // Client-side gate only — see note above the checkout link below.
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const lines = cart?.lines.nodes ?? [];
   const isEmpty = lines.length === 0;
@@ -107,12 +115,50 @@ export default function CartDrawer() {
                     )}
                 </span>
               </div>
-              <p className="lowercase text-xs leading-none text-muted">Taxes and shipping calculated at check out.</p>
+              <p className="lowercase text-xs leading-none text-muted">Taxes and shipping calculated at checkout.</p>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  className="h-3 w-3 shrink-0 accent-foreground"
+                />
+                <span className="lowercase text-xs leading-snug text-foreground/70">
+                  I accept the{' '}
+                  <Link
+                    href={TERMS_HREF}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="underline hover:text-foreground transition-colors"
+                  >
+                    Terms of Service
+                  </Link>
+                  .
+                </span>
+              </label>
+
+              {/* This checkbox only gates the link client-side — it isn't
+                  sent to Shopify, so it isn't part of the recorded order.
+                  For consent that's actually attached to the order, also
+                  enable "Require customers to agree to the terms and
+                  conditions" under Shopify Admin → Settings → Policies,
+                  which adds Shopify's own native checkbox to its hosted
+                  checkout. */}
               <a
-                href={cart?.checkoutUrl ?? '#'}
-                className="block w-full bg-background border border-foreground text-foreground text-center text-xs tracking-widest lowercase py-4 hover:bg-foreground/90 hover:text-background transition-colors"
+                href={agreedToTerms ? (cart?.checkoutUrl ?? '#') : undefined}
+                aria-disabled={!agreedToTerms}
+                onClick={(e) => {
+                  if (!agreedToTerms) e.preventDefault();
+                }}
+                className={`block w-full border text-center text-xs tracking-widest lowercase py-4 transition-colors ${
+                  agreedToTerms
+                    ? 'bg-background border-foreground text-foreground hover:bg-foreground/90 hover:text-background'
+                    : 'bg-background border-border text-muted cursor-not-allowed'
+                }`}
               >
-                Check out
+                Proceed to Checkout
               </a>
             </div>
           </>

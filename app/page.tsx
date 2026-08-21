@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { getHomepageSettings } from '@/lib/shopify/homepage';
-import MarkHomepageVisit from '@/components/ui/MarkHomepageVisit';
 import HeroCarousel from '@/components/ui/HeroCarousel';
 
 // Bundled fallback images, shown as an auto-advancing carousel whenever no
@@ -27,7 +26,6 @@ export default async function HomePage() {
     // footer (h-24 = 6rem), so the hero can grow as large as possible
     // without ever pushing the footer past the bottom of the screen.
     <div className="h-[calc(100dvh-4rem-6rem)] flex flex-col items-center justify-center px-6 py-6 gap-4">
-      <MarkHomepageVisit />
       <Link
         href="/new-in"
         aria-label="Explore new in"

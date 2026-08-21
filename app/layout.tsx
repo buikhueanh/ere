@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Amiri, Monsieur_La_Doulaise, Nothing_You_Could_Do, Cormorant_Infant } from 'next/font/google';
 import '../styles/globals.css';
 import { CartProvider } from '@/context/CartProvider';
+import { AnnouncementBarProvider } from '@/components/layout/AnnouncementBarContext';
 import AnnouncementBar from '@/components/layout/AnnouncementBar';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -65,8 +66,10 @@ export default async function RootLayout({
     <html lang="en" className={`${amiri.variable} ${monsieurLaDoulaise.variable} ${nothingYouCouldDo.variable} ${cormorantInfant.variable}`}>
       <body className="min-h-screen flex flex-col antialiased">
         <CartProvider>
-          <AnnouncementBar />
-          <Navbar vendors={vendors} />
+          <AnnouncementBarProvider>
+            <AnnouncementBar />
+            <Navbar vendors={vendors} />
+          </AnnouncementBarProvider>
           <main className='flex-1'>{children}</main>
            {/* Scroll buffer taller than the sticky navbar (~84px) so that on
               short pages the last pre-footer content (e.g. shop's page

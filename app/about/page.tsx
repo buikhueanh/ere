@@ -10,7 +10,7 @@ export default function AboutPage() {
           </h1>
           <p>
             ère curates clothing and objects from emerging brands around the
-            world, bringing their stories and creativity to the united states.
+            world, introducing <br className="hidden md:inline" /> their stories and creativity to the united states.
             in the world of ère, you belong, always.
           </p>
           <br />
@@ -31,12 +31,12 @@ export default function AboutPage() {
           <div className="flex flex-col gap-1">
             <p>follow us:</p>
             <a
-              href="https://www.instagram.com/ere__world"
+              href="https://www.instagram.com/ereworld.us/"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-foreground/70 transition-colors"
             >
-              @ere__world
+              @ereworld.us
             </a>
           </div>
         </div>

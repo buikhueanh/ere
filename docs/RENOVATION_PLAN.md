@@ -86,6 +86,15 @@ Status legend: ⬜ not started · 🟨 in progress · ✅ done
 - ⬜ Right half: info panel (carry over unchanged)
 - ⬜ "Similar products" section (same-collection query)
 
+## Discount popup (`components/ui/DiscountPopup.tsx`, `customer-care` branch)
+
+- ✅ Modal built: fixed 600×400 box on desktop (image half + copy half), collapsible side tab, per-page one-time auto-open (`/shop` + `/new-in`), "already subscribed" state persisted across page nav via sessionStorage
+- ✅ Submits to real Shopify Storefront API `customerCreate` (`acceptsMarketing: true`) — verified customers land in Shopify Admin
+- ⬜ **Discount code is never actually sent.** The modal says "check your inbox for your code" but nothing emails one — needs a Shopify Flow / Shopify Email automation (or Klaviyo, if that's in use) triggered on customer creation to send an actual code
+- ⬜ A real discount code/rule needs to exist in Shopify Admin → Discounts for that automation to send
+- ⬜ Swap `/images/discount/discount-placeholder.png` for the real campaign image (box is fixed-size, drop-in replace)
+- Note: Storefront API can't set customer tags, so there's no way to segment "signed up via this popup" vs. other signup sources (footer, `/newsletter` page, teaser) — same limitation as the Phase 1 waitlist signup
+
 ## Carried over unchanged — no action needed
 
 - ✅ Shopify data layer (products, cart, checkout, webhook revalidation)
@@ -93,6 +102,14 @@ Status legend: ⬜ not started · 🟨 in progress · ✅ done
 - ✅ No-scarcity/no-sale-price philosophy
 - ✅ Shopify-hosted checkout
 
+## Search ✅
+
+- ✅ Built as an inline navbar takeover instead of a separate `/search` page (the old stub route is deleted) — clicking the search icon expands the nav row into a search input in place, no navigation/page load
+- ✅ Results render directly below the nav as a `ProductGrid`, no dedicated results page
+- ✅ Fuzzy, typo-tolerant matching via Fuse.js (`lib/search.ts`) over title/vendor/productType/tags — plain Shopify `products(query:)` search only does near-exact keyword matching, which was too strict for a search-as-you-go box
+- ✅ `GET /api/search?q=` (`app/api/search/route.ts`) fetches the full catalog (up to 250, the Storefront API's max page size) and fuzzy-filters server-side
+- Closes on Escape, on navigating to a result, or via the X — no autocomplete/suggestions yet (submit-to-search only)
+
 ## Explicitly deferred
 
-- Search page (`/search`) — stays a stub; real build (with autocomplete/suggestions) comes later, not part of this renovation pass
+*(nothing currently deferred)*
