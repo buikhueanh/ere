@@ -7,6 +7,9 @@ export const metadata = { title: 'Sign in' };
 // page.
 const MESSAGES: Record<string, string> = {
   state_mismatch: 'that sign-in link could not be verified. please try again.',
+  session_expired: 'that sign-in link expired. please start again.',
+  missing_code: 'that sign-in attempt was incomplete. please try again.',
+  // Kept so links from older deploys still resolve to a sensible message.
   missing_parameters: 'that sign-in attempt was incomplete. please try again.',
   token_exchange_failed: 'we could not complete your sign in. please try again.',
   no_customer_id: 'we could not confirm your account. please try again.',

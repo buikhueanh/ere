@@ -7,9 +7,14 @@ import {
 } from '@/lib/auth/pkce';
 import { buildAuthorizationUrl } from '@/lib/shopify/customerAccount';
 
-// Short-lived, single-purpose cookies holding the PKCE verifier and the CSRF
-// `state`. They only need to survive the round trip to Shopify and back.
-const OAUTH_COOKIE_MAX_AGE = 60 * 10; // 10 minutes
+// Single-purpose cookies holding the PKCE verifier and the CSRF `state`.
+// They only need to survive the round trip to Shopify and back — but that
+// round trip includes the customer waiting for a one-time code to arrive by
+// email, finding it, and typing it in. 10 minutes was too tight for that and
+// produced `missing_parameters` failures that looked like a broken flow.
+// These are httpOnly + Secure and usable exactly once, so a longer window
+// costs little.
+const OAUTH_COOKIE_MAX_AGE = 60 * 30; // 30 minutes
 
 export async function GET(request: NextRequest) {
   const verifier = generateCodeVerifier();

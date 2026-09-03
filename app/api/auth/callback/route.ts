@@ -33,7 +33,19 @@ export async function GET(request: NextRequest) {
   const expectedState = request.cookies.get('ere_oauth_state')?.value;
   const returnTo = safeReturnPath(request.cookies.get('ere_oauth_return')?.value);
 
-  if (!code || !verifier || !expectedState) return fail(request, 'missing_parameters');
+  // Distinguish the three causes rather than collapsing them into one opaque
+  // reason — they have completely different fixes. A missing verifier/state
+  // means our own cookies didn't come back (almost always: the customer took
+  // longer than OAUTH_COOKIE_MAX_AGE to finish, or landed here without going
+  // through /api/auth/login first). A missing code means Shopify didn't send
+  // one, which points at the authorization request instead.
+  if (!verifier || !expectedState) {
+    console.warn(
+      `[auth/callback] oauth cookies absent (verifier=${Boolean(verifier)}, state=${Boolean(expectedState)}) — expired, or callback reached without starting at /api/auth/login`,
+    );
+    return fail(request, 'session_expired');
+  }
+  if (!code) return fail(request, 'missing_code');
 
   // CSRF check: the state we issued must match the one that came back.
   if (returnedState !== expectedState) return fail(request, 'state_mismatch');
