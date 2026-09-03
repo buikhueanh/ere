@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { getSession, getCustomerAccessToken } from '@/lib/auth/currentCustomer';
 import { customerAccountFetch } from '@/lib/shopify/customerAccount';
 
@@ -46,17 +48,25 @@ const CUSTOMER_QUERY = /* GraphQL */ `
 export default async function AccountPage() {
   const session = await getSession();
 
-  // Deliberately render a prompt rather than redirect() into the OAuth flow.
+  // A signed-out visitor goes straight to Shopify's sign-in — no interstitial.
   //
-  // This page is linked from the navbar, so Next.js prefetches it on every
-  // page view. When it redirected straight to /api/auth/login, each prefetch
-  // silently started a new authorization request and minted a fresh PKCE
-  // verifier + state cookie pair — overwriting the ones the in-flight login
-  // actually needed, and producing `session_expired` / `invalid_grant` on
-  // return. (Observed: 114 hits to /account in 30 minutes from prefetch
-  // alone.) Starting the flow only on a real click makes it impossible for a
-  // background request to clobber a live login. It is better UX too — being
-  // thrown to Shopify unannounced is worse than being asked first.
+  // But NEVER on a prefetch. This page is linked from the navbar, and when it
+  // redirected unconditionally, every background prefetch started a fresh
+  // authorization request and minted a new PKCE verifier + state cookie pair,
+  // overwriting the ones an in-flight login needed — surfacing as
+  // `session_expired` / `invalid_grant` on return, plus a redirect loop.
+  // (Observed: 114 hits to /account in 30 minutes from prefetching alone.)
+  //
+  // Next.js tags prefetches with `Next-Router-Prefetch`, so those render the
+  // static prompt below instead and touch no cookies. Belt and braces
+  // alongside `prefetch={false}` on the navbar link: that stops Next from
+  // prefetching, this stops anything else that might.
+  const isPrefetch = (await headers()).get('next-router-prefetch') === '1';
+
+  if (!session && !isPrefetch) {
+    redirect('/api/auth/login?returnTo=/account');
+  }
+
   if (!session) {
     return (
       <div className="px-6 mx-auto py-24 max-w-lg">
