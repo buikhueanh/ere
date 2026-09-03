@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import { getSession, getCustomerAccessToken } from '@/lib/auth/currentCustomer';
 import { customerAccountFetch } from '@/lib/shopify/customerAccount';
 
@@ -46,7 +45,35 @@ const CUSTOMER_QUERY = /* GraphQL */ `
 
 export default async function AccountPage() {
   const session = await getSession();
-  if (!session) redirect('/api/auth/login?returnTo=/account');
+
+  // Deliberately render a prompt rather than redirect() into the OAuth flow.
+  //
+  // This page is linked from the navbar, so Next.js prefetches it on every
+  // page view. When it redirected straight to /api/auth/login, each prefetch
+  // silently started a new authorization request and minted a fresh PKCE
+  // verifier + state cookie pair — overwriting the ones the in-flight login
+  // actually needed, and producing `session_expired` / `invalid_grant` on
+  // return. (Observed: 114 hits to /account in 30 minutes from prefetch
+  // alone.) Starting the flow only on a real click makes it impossible for a
+  // background request to clobber a live login. It is better UX too — being
+  // thrown to Shopify unannounced is worse than being asked first.
+  if (!session) {
+    return (
+      <div className="px-6 mx-auto py-24 max-w-lg">
+        <h1 className="font-handwriting italic lowercase text-xl mb-3">your account</h1>
+        <p className="text-xs lowercase text-foreground/70 mb-8">
+          sign in to view your orders and details.
+        </p>
+        <Link
+          href="/api/auth/login?returnTo=/account"
+          prefetch={false}
+          className="inline-block bg-foreground text-background px-6 py-3 text-xs tracking-widest lowercase hover:bg-foreground/90 transition-colors"
+        >
+          sign in
+        </Link>
+      </div>
+    );
+  }
 
   const accessToken = await getCustomerAccessToken();
 
