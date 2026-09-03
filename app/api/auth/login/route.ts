@@ -5,7 +5,7 @@ import {
   generateRandomState,
   safeReturnPath,
 } from '@/lib/auth/pkce';
-import { SESSION_COOKIE } from '@/lib/auth/session';
+import { SESSION_COOKIE, LEGACY_SESSION_COOKIES } from '@/lib/auth/session';
 import { buildAuthorizationUrl } from '@/lib/shopify/customerAccount';
 
 // Guards against an infinite sign-in loop. If a session cookie exists but
@@ -78,6 +78,10 @@ export async function GET(request: NextRequest) {
   // is never a reason to keep the old one around.
   response.cookies.delete(SESSION_COOKIE);
   response.cookies.delete('ere_customer_token');
+  // Best-effort cleanup of pre-rename cookies. This only reaches ones on the
+  // default path/domain — the rename above is what actually guarantees a
+  // stale cookie can no longer shadow the live one.
+  for (const legacy of LEGACY_SESSION_COOKIES) response.cookies.delete(legacy);
 
   return response;
 }
