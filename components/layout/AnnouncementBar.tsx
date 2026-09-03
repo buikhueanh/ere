@@ -20,7 +20,7 @@ export default function AnnouncementBar() {
   const lastTouchY = useRef(0);
 
   useEffect(() => {
-    setVisible(false);
+    setVisible(true);
 
     function handleWheel(e: WheelEvent) {
       if (e.deltaY > 5) {
