@@ -128,8 +128,14 @@ export function customerIdFromIdToken(idToken: string): string | null {
   if (parts.length !== 3) return null;
   try {
     const json = atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'));
-    const claims = JSON.parse(json) as { sub?: string };
-    return claims.sub ?? null;
+    // Shopify sends `sub` as a JSON *number*, not a string. Typing it as
+    // `string` and casting was a compile-time lie — the value stayed numeric
+    // at runtime, got serialised into the session unquoted, and was then
+    // rejected by verifySession's `typeof !== 'string'` guard. The session
+    // was valid and correctly signed; our own validation threw it away, which
+    // presented as an infinite sign-in redirect loop.
+    const claims = JSON.parse(json) as { sub?: string | number };
+    return claims.sub != null ? String(claims.sub) : null;
   } catch {
     return null;
   }
