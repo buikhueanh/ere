@@ -10,18 +10,18 @@ export default async function BrandsPage() {
 
   return (
     <main className="px-6 md:px-10 py-12">
-      <h1 className="text-base mb-5 lowercase">brands</h1>
+      <h1 className="text-xs mb-5 lowercase">brands</h1>
       {vendors.length === 0 ? (
         <p className="text-sm tracking-widest lowercase text-muted py-24 text-center">
           No brands found
         </p>
       ) : (
-        <ul className="divide-y divide-border border-y border-border max-w-xl">
+        <ul className="max-w-xl">
           {vendors.map((vendor) => (
             <li key={vendor}>
               <Link
                 href={`/brands/${encodeURIComponent(vendor)}`}
-                className="block py-4 text-base lowercase hover:text-foreground/60 transition-colors"
+                className="block py-4 text-xs lowercase text-foreground/70 hover:text-foreground transition-colors"
               >
                 {vendor}
               </Link>
