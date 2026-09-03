@@ -207,13 +207,17 @@ export default function Navbar({ vendors }: NavbarProps) {
               className="text-foreground/70 hover:text-foreground transition-colors"
             />
           </button>
-          {/* Always points at /account — that page redirects to the Shopify
-              login when there's no session, so one entry point covers both
-              signed-in and signed-out visitors. The session cookie is
-              httpOnly, so this client component can't read it to show a
-              signed-in state; that would need the header to become a server
-              component. */}
-          <Link href="/account" aria-label="Account">
+          {/* Always points at /account, which shows either the account itself
+              or a sign-in prompt — one entry point covering both states. The
+              session cookie is httpOnly, so this client component can't read
+              it to show a signed-in state; that would need the header to
+              become a server component.
+
+              prefetch={false} is deliberate: /account is per-customer and
+              cookie-dependent, so prefetching it is wasted work on every page
+              view — and it was the direct cause of an auth bug where
+              background prefetches clobbered in-flight login cookies. */}
+          <Link href="/account" prefetch={false} aria-label="Account">
             <User
               size={18}
               strokeWidth={1.5}
