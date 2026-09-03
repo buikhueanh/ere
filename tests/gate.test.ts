@@ -10,6 +10,14 @@ describe('isAlwaysAllowed', () => {
     expect(isAlwaysAllowed('/api/webhooks/shopify')).toBe(true);
   });
 
+  it('allows the customer-account OAuth routes', () => {
+    // Shopify redirects back to the callback from its own domain; gating it
+    // would swallow the authorization code and break every login.
+    expect(isAlwaysAllowed('/api/auth/login')).toBe(true);
+    expect(isAlwaysAllowed('/api/auth/callback')).toBe(true);
+    expect(isAlwaysAllowed('/api/auth/logout')).toBe(true);
+  });
+
   it('allows Next internals and static assets', () => {
     expect(isAlwaysAllowed('/_next/static/chunk.js')).toBe(true);
     expect(isAlwaysAllowed('/images/hero/homepage.png')).toBe(true);

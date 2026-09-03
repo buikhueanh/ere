@@ -6,10 +6,14 @@ export const PREVIEW_COOKIE = 'ere_preview';
 
 // Paths that must always be reachable regardless of launch status: the gate
 // page itself, the Shopify webhook (Shopify must be able to hit it no matter
-// what), and Next's own static/image internals.
+// what), the customer-account OAuth routes (Shopify redirects the browser
+// back to /api/auth/callback from its own domain — if that redirect gets
+// bounced to the gate, the authorization code is never exchanged and every
+// login silently fails), and Next's own static/image internals.
 const ALWAYS_ALLOWED = [
   GATE_PATH,
   '/api/webhooks',
+  '/api/auth',
   '/_next',
   '/images',
   '/favicon.ico',

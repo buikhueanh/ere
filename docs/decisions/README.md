@@ -15,6 +15,7 @@ Each file documents one decision: what we chose for **v1**, why, and what should
 | [009](009-webhook-revalidation.md) | Webhook cache revalidation | Shopify webhooks + Next.js cache tags, 60s fallback | Production deploy (swap tunnel URL), API version deprecation |
 | [010](010-rebrand-renovation.md) | Rebrand renovation (teaser, IA, layout) | Gated teaser + new nav/IA (§8 superseded by 011) | UX testing post-launch; see `docs/RENOVATION_PLAN.md` for build status |
 | [011](011-shop-categories-placeholders.md) | Shop categories, placeholders, dropdowns | Collections as categories + product-free placeholder images + 16-card pages | Search UX decision; placeholder links; collection list growth |
+| [012](012-customer-accounts-and-database.md) | Customer accounts & supplementary database | Shopify Customer Account API for auth/identity/orders + separate DB (cached email/name + custom fields + recommendation events) | Onboarding forced-vs-skippable decision; GDPR delete handling; DB provider pick |
 
 ## Conventions
 

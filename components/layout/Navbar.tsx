@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Search, ShoppingBag, Menu, X, Plus, Minus } from "lucide-react";
+import { Search, ShoppingBag, User, Menu, X, Plus, Minus } from "lucide-react";
 import { navLinks, footerLinks } from "@/config/navigation";
 import { shopCategories } from "@/config/shop-categories";
 import { useCartContext } from "@/context/CartProvider";
@@ -207,6 +207,19 @@ export default function Navbar({ vendors }: NavbarProps) {
               className="text-foreground/70 hover:text-foreground transition-colors"
             />
           </button>
+          {/* Always points at /account — that page redirects to the Shopify
+              login when there's no session, so one entry point covers both
+              signed-in and signed-out visitors. The session cookie is
+              httpOnly, so this client component can't read it to show a
+              signed-in state; that would need the header to become a server
+              component. */}
+          <Link href="/account" aria-label="Account">
+            <User
+              size={18}
+              strokeWidth={1.5}
+              className="text-foreground/70 hover:text-foreground transition-colors"
+            />
+          </Link>
           <button onClick={openCart} aria-label="Cart" className="relative">
             <ShoppingBag
               size={18}
