@@ -14,6 +14,8 @@ const MESSAGES: Record<string, string> = {
   token_exchange_failed: 'we could not complete your sign in. please try again.',
   no_customer_id: 'we could not confirm your account. please try again.',
   access_denied: 'sign in was cancelled.',
+  loop_detected:
+    'we could not keep you signed in. your sign-in data has been cleared — please try once more.',
 };
 
 export default async function AccountErrorPage({
