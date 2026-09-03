@@ -8,7 +8,20 @@
 
 import { base64UrlEncode } from './pkce';
 
-export const SESSION_COOKIE = 'ere_session';
+// Versioned deliberately. A previous deploy left `ere_session` cookies in
+// browsers under a Path/Domain we can't target with delete() (server-side
+// deletion only matches the default path/domain), and cookies().get() returns
+// whichever the browser sends first — so a stale cookie permanently shadowed
+// every freshly-issued one, failing verification and looping sign-in forever.
+// Diagnosed by payload length: the stale cookie carried a 12-character
+// customer id (106 chars total) while the callback was issuing a 14-character
+// one (108). Bumping the name sidesteps the shadow entirely, and fixes it for
+// every visitor rather than only those who manually clear cookies.
+// If the payload shape ever changes again, bump this again.
+export const SESSION_COOKIE = 'ere_session_v2';
+
+/** Legacy cookie names, expired on sign-in so they can't shadow the current one. */
+export const LEGACY_SESSION_COOKIES = ['ere_session'];
 
 /** Everything the app needs about the logged-in customer without calling Shopify. */
 export interface SessionPayload {

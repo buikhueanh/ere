@@ -12,9 +12,23 @@ export async function getSession(): Promise<SessionPayload | null> {
   // which have completely different causes. Logs no secret material — only
   // presence and length. Remove once the loop is resolved.
   if (!session) {
+    // Decode (without verifying) just the payload half so we can see WHICH
+    // session this is — the one we just issued, or an older shadowing cookie
+    // the browser kept. No secret material: the signature half is never
+    // logged, and customerId/exp are the customer's own non-sensitive values.
+    let claims = 'unreadable';
+    try {
+      const body = raw?.split('.')[0];
+      if (body) {
+        claims = atob(body.replace(/-/g, '+').replace(/_/g, '/'));
+      }
+    } catch {
+      claims = 'undecodable';
+    }
+
     console.warn(
       `[auth/session] no valid session (cookie present=${Boolean(raw)}, length=${raw?.length ?? 0}, ` +
-        `secret configured=${Boolean(process.env.SESSION_SECRET)})`,
+        `secret configured=${Boolean(process.env.SESSION_SECRET)}, payload=${claims})`,
     );
   }
 
