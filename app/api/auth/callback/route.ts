@@ -7,7 +7,14 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
 /** Clears the one-shot OAuth cookies whichever way the request ends. */
 function clearOAuthCookies(response: NextResponse) {
-  for (const name of ['ere_oauth_verifier', 'ere_oauth_state', 'ere_oauth_return']) {
+  for (const name of [
+    'ere_oauth_verifier',
+    'ere_oauth_state',
+    'ere_oauth_return',
+    // Reset the loop guard once a flow finishes, either way — otherwise a few
+    // ordinary sign-ins over time would eventually trip the attempt limit.
+    'ere_auth_attempt',
+  ]) {
     response.cookies.delete(name);
   }
   return response;
