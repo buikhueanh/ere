@@ -48,7 +48,10 @@ export async function GET(request: NextRequest) {
   if (!code) return fail(request, 'missing_code');
 
   // CSRF check: the state we issued must match the one that came back.
-  if (returnedState !== expectedState) return fail(request, 'state_mismatch');
+  if (returnedState !== expectedState) {
+    console.warn('[auth/callback] state mismatch — issued and returned state differ');
+    return fail(request, 'state_mismatch');
+  }
 
   try {
     const tokens = await exchangeCodeForToken({
@@ -58,7 +61,12 @@ export async function GET(request: NextRequest) {
     });
 
     const customerId = tokens.id_token ? customerIdFromIdToken(tokens.id_token) : null;
-    if (!customerId) return fail(request, 'no_customer_id');
+    if (!customerId) {
+      console.warn(
+        `[auth/callback] no customer id (id_token present=${Boolean(tokens.id_token)})`,
+      );
+      return fail(request, 'no_customer_id');
+    }
 
     const response = NextResponse.redirect(new URL(returnTo, origin));
     clearOAuthCookies(response);
@@ -90,6 +98,11 @@ export async function GET(request: NextRequest) {
       path: '/',
       maxAge: tokens.expires_in,
     });
+
+    console.log(
+      `[auth/callback] success: session issued for ${customerId}, redirecting to ${returnTo} ` +
+        `(shopify token ${tokens.access_token.length} chars, expires_in ${tokens.expires_in}s)`,
+    );
 
     return response;
   } catch (error) {
