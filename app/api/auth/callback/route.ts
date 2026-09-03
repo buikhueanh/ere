@@ -106,6 +106,20 @@ export async function GET(request: NextRequest) {
       maxAge: tokens.expires_in,
     });
 
+    // Retained solely to pass back as `id_token_hint` when signing out —
+    // Shopify's end-session endpoint needs it to know whose session to end.
+    // Kept for the length of our session, not the (shorter) access token,
+    // because sign-out must still work after the access token has expired.
+    if (tokens.id_token) {
+      response.cookies.set('ere_id_token', tokens.id_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: SESSION_MAX_AGE,
+      });
+    }
+
     console.log(
       `[auth/callback] success: session issued for ${customerId}, redirecting to ${returnTo} ` +
         `(shopify token ${tokens.access_token.length} chars, expires_in ${tokens.expires_in}s)`,

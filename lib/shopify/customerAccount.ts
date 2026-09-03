@@ -69,6 +69,28 @@ export function buildAuthorizationUrl({
   return url.toString();
 }
 
+/**
+ * Shopify's OIDC end-session URL. Ends the *Shopify* session, not just ours —
+ * without this, "sign out" only clears our cookies and the next sign-in
+ * silently re-authenticates as the same customer with no prompt, which on a
+ * shared device means the account never really closes.
+ *
+ * `postLogoutRedirectUri` must be registered as a Logout URI in the Customer
+ * Account API application settings, or Shopify rejects the redirect.
+ */
+export function buildLogoutUrl({
+  idToken,
+  postLogoutRedirectUri,
+}: {
+  idToken: string;
+  postLogoutRedirectUri: string;
+}): string {
+  const url = new URL(authEndpoints().logout);
+  url.searchParams.set('id_token_hint', idToken);
+  url.searchParams.set('post_logout_redirect_uri', postLogoutRedirectUri);
+  return url.toString();
+}
+
 export interface TokenResponse {
   access_token: string;
   expires_in: number;
