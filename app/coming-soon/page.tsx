@@ -20,21 +20,20 @@ export default function ComingSoonPage() {
           which is a client component wired to cart context and dropdowns that
           this page has no use for.
 
-          Sized to that link's 30px line box (text-3xl leading-none); 73px is
-          30px x the logo's 2.44:1 aspect ratio. The wrapper must be
-          `relative` with explicit dimensions — <Image fill> positions against
-          its nearest positioned ancestor, and with none it stretched across
-          the entire page. */}
+          Logo box is `w-18 h-6`, the same size the navbar gives its own
+          wordmark. The wrapper must be `relative` with explicit dimensions —
+          <Image fill> positions against its nearest positioned ancestor, and
+          with none it stretched across the entire page. */}
       <header className="w-full bg-background">
         <nav className="w-full px-6 md:px-10 h-15 pb-2 flex items-center">
-          <div className="relative h-[30px] w-[73px]">
+          <div className="relative w-18 h-6">
             <Image
               src="/images/logo-ere.png"
               alt="ère"
               fill
               priority
               className="object-contain object-left"
-              sizes="73px"
+              sizes="72px"
             />
           </div>
         </nav>
