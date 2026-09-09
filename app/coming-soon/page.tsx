@@ -1,8 +1,9 @@
-import type { Metadata } from 'next';
-import NewsletterSignup from '@/components/ui/NewsletterSignup';
+import type { Metadata } from "next";
+import NewsletterSignup from "@/components/ui/NewsletterSignup";
+import Image from "next/image";
 
 export const metadata: Metadata = {
-  title: 'coming soon',
+  title: "coming soon",
   robots: { index: false, follow: false },
 };
 
@@ -12,7 +13,12 @@ export default function ComingSoonPage() {
   return (
     <div className="min-h-[calc(100vh-3rem)] flex flex-col">
       {/* Wordmark, top-left — plain text in the script font */}
-      <p className="font-script text-3xl px-6 md:px-10 pt-8">ère</p>
+      <Image
+        src="/images/logo-ere.png"
+        alt="ère"
+        fill
+        className="object-contain"
+      />
 
       <div className="flex-1 flex items-center">
         <NewsletterSignup

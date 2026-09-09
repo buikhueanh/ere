@@ -178,25 +178,62 @@ page rather than in `middleware.ts`. Same effect, verified working, and it
 avoids duplicating the check in two places. Revisit if `/account/*` grows
 enough routes that a single middleware guard becomes cheaper.
 
-Verified end to end against the running app: logged-out `/account` → 307 to
-login; a validly-signed forged session → 200 with the account page; a
-one-character-tampered signature → 307 back to login; unknown `?reason=`
-values are not echoed into the error page (no reflected XSS); missing client
-ID fails loudly instead of building a malformed authorization URL.
+**Status: working in production as of 2026-09-03.** Verified end to end on
+`ere-world.com` — account icon → Shopify sign-in → back to `/account` showing
+name, email and order history → sign out. Four bugs were fixed to get there;
+see `docs/CHANGELOG.md` (2026-09-03) for the full diagnosis of each.
 
-**Not verified:** the actual OAuth round trip, which needs the Client ID and
-a non-localhost callback host (see blockers below).
+### Shopify Admin configuration this depends on
 
-### Blockers before this can be tested
+Headless channel → storefront → **Customer Account API** → Application setup:
 
-1. **Client ID** — Shopify Admin → Headless channel → storefront → Customer
-   Account API. Set `SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID`, and register the
-   callback URL `https://<host>/api/auth/callback` there.
-2. **No localhost.** Shopify rejects `http://` and `localhost` callback URLs
-   outright, so the flow cannot be exercised on `localhost:3000` — it needs a
-   tunnel (cloudflared, as already used for webhooks) or a Vercel preview URL.
-3. `SESSION_SECRET` and `SHOPIFY_SHOP_ID` are set locally but must also be
-   added in Vercel for Production and Preview.
+- **Callback URI:** `https://ere-world.com/api/auth/callback`
+- **Logout URI:** `https://ere-world.com/` — required; without it Shopify
+  rejects the `post_logout_redirect_uri` on sign-out.
+- Client ID → `SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID`.
+
+Shopify rejects `http://` and `localhost` callback URLs outright, so this
+flow **cannot be exercised on `localhost:3000`** — it needs a tunnel
+(cloudflared, as already used for webhooks) or a deployed URL. That is why
+the auth routes were developed against unit tests and forged sessions
+locally, and only proven on production.
+
+Env vars required in Vercel (Production *and* Preview):
+`SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID`, `SHOPIFY_SHOP_ID` (96116310313),
+`SESSION_SECRET`. Preview scoping is easy to miss — vars added only to
+Production leave preview deployments failing with "not configured".
+
+### Sign-out ends the Shopify session, not just ours
+
+Clearing local cookies alone left the customer authenticated with Shopify, so
+the next sign-in silently re-authenticated them with no prompt — meaning that
+on a shared device the account never actually closed. Logout therefore
+redirects to Shopify's OIDC `end_session_endpoint` with an `id_token_hint`,
+which is why the `id_token` is retained in an httpOnly cookie at callback
+time. It degrades to a local-only sign-out when no `id_token` is present.
+
+### Cookies this flow owns
+
+| Cookie | Purpose | Lifetime |
+|---|---|---|
+| `ere_session_v2` | HMAC-signed app session (customerId + exp) | 7 days |
+| `ere_customer_token` | Shopify access token, for Customer Account API calls | Shopify's `expires_in` |
+| `ere_id_token` | Retained solely as `id_token_hint` for sign-out | 7 days |
+| `ere_oauth_verifier` / `_state` / `_return` | One-shot PKCE + CSRF + return path | 30 min |
+| `ere_auth_attempt` | Loop guard; aborts after 3 failed attempts | 30 min |
+
+All are httpOnly and `Secure` in production. `sameSite` is `lax`, not
+`strict` — the customer returns via a top-level cross-site redirect from
+Shopify, and `strict` cookies are not sent on that navigation, which would
+break every sign-in.
+
+### Deliberate deviation from the plan above
+
+`/account` is gated by the page itself rather than in `middleware.ts`, and it
+redirects to the OAuth start **only on a real navigation** — prefetch
+requests render a static prompt instead. That is not cosmetic: redirecting
+unconditionally let Next.js's link prefetching mint fresh PKCE cookies in the
+background and clobber in-flight logins.
 
 ### Deferred to Phase 2 (needs the database)
 
