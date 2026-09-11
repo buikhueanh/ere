@@ -51,8 +51,8 @@ body {
    frame identical to 0% and the loop is seamless. Duration is set inline
    per content width; only the motion itself lives here. */
 @keyframes ticker-scroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
 }
 .ticker-track {
   animation: ticker-scroll linear infinite;
