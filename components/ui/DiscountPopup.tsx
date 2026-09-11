@@ -167,7 +167,7 @@ export default function DiscountPopup() {
               welcome to ère
             </h2>
             <p className="text-xs text-foreground leading-relaxed">
-              sign up for our newsletter and enjoy <br className="hidden md:inline" /> 10% off your first purchase.
+              create your ère <span className="uppercase">ID</span> for a personalized experience <br className="hidden md:inline" /> and enjoy 10% off* your first purchase
             </p>
 
             {status === 'success' ? (
@@ -189,7 +189,7 @@ export default function DiscountPopup() {
                   disabled={status === 'submitting'}
                   className="w-full bg-foreground text-background px-6 py-3 text-xs tracking-widest uppercase hover:bg-foreground/90 transition-colors disabled:opacity-60"
                 >
-                  {status === 'submitting' ? 'signing up…' : 'join now'}
+                  {status === 'submitting' ? 'signing up…' : 'create'}
                 </button>
                 {status === 'error' && (
                   <p className="text-xs text-foreground/70">{errorMessage}</p>
@@ -198,8 +198,8 @@ export default function DiscountPopup() {
             )}
 
 
-            <p className="text-xs italic lowercase text-foreground/60 leading-relaxed">
-              *one-time use per customer.
+            <p className="text-[9px] italic lowercase text-foreground/60 leading-relaxed">
+              by creating your ère <span className="uppercase">ID</span>, you agree to receive marketing <br className="hidden md:inline" />  emails from us and acknowledge our privacy policy. <br className="hidden md:inline" /> you can  delete your ère <span className="uppercase">ID</span> anytime.
             </p>
           </div>
         </div>

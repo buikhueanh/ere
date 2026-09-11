@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, ReactNode } from 'react';
 import Image from 'next/image';
 import { joinNewsletter } from '@/lib/shopify/customer';
 import { isValidEmail } from '@/lib/newsletter';
 
 interface NewsletterSignupProps {
   headline: string;
-  subtext: string;
+  subtext: ReactNode;
   imageSrc: string;
   imageAlt?: string;
 }
@@ -91,15 +91,14 @@ export default function NewsletterSignup({
                 disabled={status === 'submitting'}
                 className="bg-input-fill border border-input-fill text-foreground px-6 py-3 text-xs tracking-widest uppercase hover:bg-foreground/90 hover:text-background transition-colors disabled:opacity-60 peer-focus:border-foreground"
               >
-                {status === 'submitting' ? 'Signing up…' : 'Sign Up'}
+                {status === 'submitting' ? 'Signing up…' : 'CREATE'}
               </button>
             </div>
             {status === 'error' && (
               <p className="text-xs text-foreground/70 lowercase">{errorMessage}</p>
             )}
             <p className="text-xs text-foreground lowercase pt-2">
-              By signing up, you agree to receive email updates from ère and
-              acknowledge our privacy policy, Unsubscribe anytime.
+              by creating your personal ère <span className="uppercase">ID</span>, you agree to receive marketing emails from ère and acknowledge our privacy policy.
             </p>
           </form>
         )}

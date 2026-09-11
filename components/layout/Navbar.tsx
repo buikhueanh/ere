@@ -14,7 +14,10 @@ import ProductGrid from "@/components/product/ProductGrid";
 import type { ShopifyProductCard } from "@/types/shopify.types";
 
 interface NavbarProps {
-  vendors: string[];
+  vendors?: string[];
+  /** Pre-launch gate variant (decision 010 §2): centered logo only, not a
+   * link — there's nowhere for it to navigate to yet. */
+  isComingSoon?: boolean;
 }
 
 const shopDropdownItems = [
@@ -26,7 +29,7 @@ const shopDropdownItems = [
   })),
 ];
 
-export default function Navbar({ vendors }: NavbarProps) {
+export default function Navbar({ vendors = [], isComingSoon = false }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
@@ -93,12 +96,32 @@ export default function Navbar({ vendors }: NavbarProps) {
     closeTimer.current = setTimeout(() => setActiveDropdown(null), 150);
   };
 
-  // The pre-launch gate page has no navbar by design (decision 010 §2).
-  if (pathname === "/coming-soon") return null;
+  // The layout's global navbar hides itself on the gate page — that page
+  // renders its own <Navbar isComingSoon /> instance instead, further down.
+  if (pathname === "/coming-soon" && !isComingSoon) return null;
 
   // Two variants (decision 010 §4): the homepage shows only "newsletter" +
   // search/cart; everywhere else shows the full in-site links.
   const isHomepage = pathname === "/";
+
+  if (isComingSoon) {
+    return (
+      <header className="w-full bg-background">
+        <nav className="w-full px-6 md:px-10 h-15 pb-2 flex items-center justify-center">
+          <div className="relative w-18 h-6">
+            <Image
+              src="/images/logo-ere.png"
+              alt="ère"
+              fill
+              priority
+              className="object-contain object-center"
+              sizes="72px"
+            />
+          </div>
+        </nav>
+      </header>
+    );
+  }
 
   return (
     <header
@@ -111,10 +134,10 @@ export default function Navbar({ vendors }: NavbarProps) {
         <div className="flex items-center gap-4 justify-self-start">
           {isHomepage ? (
             <Link
-              href="/newsletter"
+              href="/new-in"
               className="hidden sm:block font-script text-3xl leading-none hover:text-foreground/70 transition-colors"
             >
-              sign up
+              shop
             </Link>
           ) : (
             <>
