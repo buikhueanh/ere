@@ -71,7 +71,9 @@ export default function AnnouncementBar() {
           visible ? "opacity-100" : "opacity-0"
         }`}
       >
-        free shipping for orders of $300+ within the united states
+         <span>
+          create your ère <span className="uppercase">ID</span> & enjoy 10% off* your first purchase
+        </span>
       </p>
     </div>
   );
