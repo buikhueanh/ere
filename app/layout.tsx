@@ -4,6 +4,7 @@ import '../styles/globals.css';
 import { CartProvider } from '@/context/CartProvider';
 import { AnnouncementBarProvider } from '@/components/layout/AnnouncementBarContext';
 import AnnouncementBar from '@/components/layout/AnnouncementBar';
+import DiscountPopup from '@/components/ui/DiscountPopup';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/ui/CartDrawer';
@@ -69,6 +70,10 @@ export default async function RootLayout({
           <AnnouncementBarProvider>
             <AnnouncementBar />
             <Navbar vendors={vendors} />
+            {/* Mounted once here (not per page) so the announcement bar's
+                signup line can open it anywhere; its auto-open stays limited
+                to /shop and /new-in inside the component (decision 013). */}
+            <DiscountPopup />
           </AnnouncementBarProvider>
           {/* flex flex-col (not just flex-1) so a page's root element can
               use flex-1 itself to fill main's real height exactly — a plain
