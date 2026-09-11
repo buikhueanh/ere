@@ -22,6 +22,8 @@ describe('isAlwaysAllowed', () => {
     expect(isAlwaysAllowed('/_next/static/chunk.js')).toBe(true);
     expect(isAlwaysAllowed('/images/hero/homepage.png')).toBe(true);
     expect(isAlwaysAllowed('/favicon.ico')).toBe(true);
+    expect(isAlwaysAllowed('/icon.png')).toBe(true);
+    expect(isAlwaysAllowed('/apple-icon.png')).toBe(true);
   });
 
   it('allows robots.txt and sitemap.xml regardless of launch status', () => {

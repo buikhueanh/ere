@@ -16,7 +16,12 @@ const ALWAYS_ALLOWED = [
   '/api/auth',
   '/_next',
   '/images',
+  // Every Next.js metadata-file convention the app uses (app/icon.png etc.).
+  // Google's favicon fetcher follows a 307 to /coming-soon, finds HTML, and
+  // falls back to a generic globe — so icons must pass the gate.
   '/favicon.ico',
+  '/icon.png',
+  '/apple-icon.png',
   '/robots.txt',
   '/sitemap.xml',
 ];
