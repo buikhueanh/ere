@@ -154,9 +154,9 @@ export default function DiscountPopup() {
           <button
             onClick={handleClose}
             aria-label="Close"
-            className="absolute -top-3 -right-3 md:top-4 md:right-4 z-10 flex items-center justify-center w-8 h-8 rounded-full bg-background border border-foreground text-foreground hover:bg-foreground hover:text-background transition-colors"
+            className="absolute -top-3 -right-3 md:top-4 md:right-4 z-10 flex items-center justify-center w-8 h-8 bg-background text-foreground"
           >
-            <X size={16} strokeWidth={1.5} />
+            <X size={10} strokeWidth={1.5} />
           </button>
 
           {/* Image */}
@@ -214,26 +214,30 @@ export default function DiscountPopup() {
         </div>
       </div>
 
-      {/* Collapsed side tab */}
-      <button
-        onClick={openDiscount}
-        onMouseEnter={() => {
-          if (peekTimer.current) clearTimeout(peekTimer.current);
-          setIsTagPeeking(false);
-        }}
-        onMouseLeave={schedulePeek}
-        aria-label="Open 10% off offer"
-        className={`fixed right-0 top-9/10 -translate-y-1/2 z-40 bg-input-fill text-foreground px-2 py-3 text-xs tracking-widest uppercase transition-transform duration-300 ${
-          !hasOpenedOnce || isOpen
-            ? 'translate-x-full'
-            : isTagPeeking
-              ? 'translate-x-[calc(100%-8px)]'
-              : 'translate-x-0'
-        }`}
-        style={{ writingMode: 'vertical-lr' }}
-      >
-        10% off
-      </button>
+      {/* Collapsed side tab — not shown on the homepage, which has its own
+          "shop" entry point and doesn't need the offer tab competing for
+          attention. */}
+      {pathname !== '/' && (
+        <button
+          onClick={openDiscount}
+          onMouseEnter={() => {
+            if (peekTimer.current) clearTimeout(peekTimer.current);
+            setIsTagPeeking(false);
+          }}
+          onMouseLeave={schedulePeek}
+          aria-label="Open 10% off offer"
+          className={`fixed right-0 top-9/10 -translate-y-1/2 z-40 bg-input-fill text-foreground px-2 py-3 text-xs tracking-widest uppercase transition-transform duration-300 ${
+            !hasOpenedOnce || isOpen
+              ? 'translate-x-full'
+              : isTagPeeking
+                ? 'translate-x-[calc(100%-8px)]'
+                : 'translate-x-0'
+          }`}
+          style={{ writingMode: 'vertical-lr' }}
+        >
+          10% off
+        </button>
+      )}
     </>
   );
 }

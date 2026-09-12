@@ -17,7 +17,7 @@ export default function ComingSoonPage() {
 
       <div className="flex-1 flex flex-col items-center justify-center text-center gap-10">
         <TypewriterText
-          text="Coming up soon. Stay tuned x"
+          text="Coming soon. Stay tuned x"
           className="text-xs text-foreground lowercase"
         />
       </div>

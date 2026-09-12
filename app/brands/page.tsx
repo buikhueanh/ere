@@ -13,7 +13,7 @@ export default async function BrandsPage() {
 
   return (
     <main className="px-6 md:px-10 py-12">
-      <h1 className="text-xs mb-5 lowercase">brands</h1>
+      <h1 className="text-xs mb-5 lowercase">( a-z )</h1>
       {groups.length === 0 ? (
         <p className="text-sm tracking-widest lowercase text-muted py-24 text-center">
           No brands found

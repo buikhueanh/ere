@@ -6,7 +6,7 @@ import type { Announcement } from '@/config/announcements';
 
 // Constant speed in px/s regardless of how much copy there is — a fixed
 // duration would make one long promo crawl and three short ones sprint.
-const SPEED_PX_PER_S = 80;
+const SPEED_PX_PER_S = 70;
 
 // Continuous right-to-left marquee of promo items, stock-ticker style.
 //
@@ -54,7 +54,7 @@ export default function PromoTicker({ items }: { items: Announcement[] }) {
     <>
       {items.map((item) => {
         const content = (
-          <span className="whitespace-nowrap px-5">{item.message}</span>
+          <span className="whitespace-nowrap px-6">{item.message}</span>
         );
         return item.kind === 'promo' && item.href ? (
           <Link key={item.id} href={item.href} className="">

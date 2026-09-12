@@ -20,12 +20,16 @@ export const announcements: Announcement[] = [
     kind: 'signup',
     message: (
       <>
-        create your ère <span className="uppercase">ID</span> & enjoy 10% off* your first purchase
+        create your ère ID & enjoy 10% off* your first purchase
       </>
     ),
   },
   // Example promos — remove the signup item above to run these as a ticker:
-  // { id: 'free-shipping', kind: 'promo', message: 'free shipping for orders of $250+ within the continental us' },
+  // { id: 'free-shipping', kind: 'promo', message: (
+  //     <>
+  //       <span className="uppercase">free shipping on all orders</span>
+  //     </>
+  //   ), },
   // { id: 'ss26', kind: 'promo', message: 'ss26 preview — 15% off outerwear through sunday', href: '/shop' },
 ];
 

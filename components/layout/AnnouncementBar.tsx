@@ -85,7 +85,7 @@ export default function AnnouncementBar() {
           <button
             type="button"
             onClick={openDiscount}
-            className="flex h-full w-full items-center justify-center px-10 text-center hover:underline underline-offset-4"
+            className="flex h-full w-full items-center justify-center px-10 text-center underline-offset-4"
           >
             {resolved.item.message}
           </button>
