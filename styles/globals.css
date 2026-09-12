@@ -45,3 +45,33 @@ body {
   font-family: var(--font-serif);
   -webkit-font-smoothing: antialiased;
 }
+
+/* Announcement-bar promo ticker (components/layout/PromoTicker.tsx). The
+   track holds an even number of identical item groups, so -50% lands on a
+   frame identical to 0% and the loop is seamless. Duration is set inline
+   per content width; only the motion itself lives here. */
+@keyframes ticker-scroll {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+.ticker-track {
+  animation: ticker-scroll linear infinite;
+}
+/* Pause so a linked promo can actually be clicked. Plain CSS rather than
+   Tailwind's group-hover: utilities — this file is unlayered, so the
+   `animation` shorthand above would override a layered utility's
+   play-state. */
+.ticker:hover .ticker-track,
+.ticker:focus-within .ticker-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
+    width: 100%;
+    justify-content: center;
+  }
+  .ticker-track > [aria-hidden] {
+    display: none;
+  }
+}

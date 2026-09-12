@@ -1,5 +1,4 @@
 import ShopPageContent from '@/components/product/ShopPageContent';
-import DiscountPopup from '@/components/ui/DiscountPopup';
 
 export const metadata = { title: 'Shop' };
 
@@ -12,7 +11,6 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
   return (
     <>
-      <DiscountPopup />
       <ShopPageContent
         pageKey="all-items"
         heading="all items"

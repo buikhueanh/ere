@@ -6,21 +6,26 @@ import Image from 'next/image';
 import { X } from 'lucide-react';
 import { joinNewsletter } from '@/lib/shopify/customer';
 import { isValidEmail } from '@/lib/newsletter';
+import { useAnnouncementBar } from '@/components/layout/AnnouncementBarContext';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
+// Mounted once in the root layout so the announcement bar's signup line can
+// open it from any page (decision 013). The first-visit auto-open is still
+// limited to these pages, exactly as when the popup was mounted on them
+// directly.
+const AUTO_OPEN_PATHS = ['/shop', '/new-in'];
+
 // Session-scoped so it re-triggers on a fresh visit but not on every page
-// load — mounted on /shop and /new-in only; each page gets its own one-time
-// auto-open the first time it's visited this session, regardless of how the
-// user got there, then collapses to the side tab for the rest of the
-// session (decision: quick-fix spec, 2026-08-21).
+// load; each auto-open page gets its own one-time auto-open the first time
+// it's visited this session, regardless of how the user got there, then
+// collapses to the side tab for the rest of the session (decision:
+// quick-fix spec, 2026-08-21).
 const SESSION_KEY_PREFIX = 'ere-discount-popup-seen:';
 
-// DiscountPopup is a separate component instance on each page (/shop,
-// /new-in), so `status`/`email` local state doesn't survive navigating
-// between them — without this flag, a user who already signed up on one
-// page would see a fresh blank form (and could submit a different email)
-// the moment they land on the other page.
+// Survives a full reload, which local state doesn't — without this flag a
+// user who already signed up would see a fresh blank form (and could submit
+// a different email) after reloading or returning later in the session.
 const SUBSCRIBED_KEY = 'ere-discount-popup-subscribed';
 
 // How long the collapsed tab stays fully out before tucking away to an
@@ -36,7 +41,8 @@ const AUTO_OPEN_DELAY_MS = 1200;
 
 export default function DiscountPopup() {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
+  // Open state lives in context so the announcement bar can open the popup.
+  const { discountOpen: isOpen, openDiscount, closeDiscount } = useAnnouncementBar();
   const [hasOpenedOnce, setHasOpenedOnce] = useState(false);
   const [isTagPeeking, setIsTagPeeking] = useState(false);
   const [email, setEmail] = useState('');
@@ -68,6 +74,8 @@ export default function DiscountPopup() {
       setStatus('success');
     }
 
+    if (!AUTO_OPEN_PATHS.includes(pathname)) return;
+
     const sessionKey = `${SESSION_KEY_PREFIX}${pathname}`;
     const alreadySeen = sessionStorage.getItem(sessionKey);
 
@@ -87,14 +95,15 @@ export default function DiscountPopup() {
     // "already seen" and bails out without ever opening the popup.
     const timer = setTimeout(() => {
       sessionStorage.setItem(sessionKey, 'true');
-      setIsOpen(true);
-      setHasOpenedOnce(true);
+      openDiscount();
     }, AUTO_OPEN_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [pathname]);
+  }, [pathname, openDiscount]);
 
+  // The only way the popup closes, whichever way it was opened (auto, side
+  // tab, announcement bar) — so this is also where the side tab is armed.
   function handleClose() {
-    setIsOpen(false);
+    closeDiscount();
     setHasOpenedOnce(true);
   }
 
@@ -145,9 +154,9 @@ export default function DiscountPopup() {
           <button
             onClick={handleClose}
             aria-label="Close"
-            className="absolute -top-3 -right-3 md:top-4 md:right-4 z-10 flex items-center justify-center w-8 h-8 rounded-full bg-background border border-foreground text-foreground hover:bg-foreground hover:text-background transition-colors"
+            className="absolute -top-3 -right-3 md:top-4 md:right-4 z-10 flex items-center justify-center w-8 h-8 bg-background text-foreground"
           >
-            <X size={16} strokeWidth={1.5} />
+            <X size={10} strokeWidth={1.5} />
           </button>
 
           {/* Image */}
@@ -205,26 +214,30 @@ export default function DiscountPopup() {
         </div>
       </div>
 
-      {/* Collapsed side tab */}
-      <button
-        onClick={() => setIsOpen(true)}
-        onMouseEnter={() => {
-          if (peekTimer.current) clearTimeout(peekTimer.current);
-          setIsTagPeeking(false);
-        }}
-        onMouseLeave={schedulePeek}
-        aria-label="Open 10% off offer"
-        className={`fixed right-0 top-9/10 -translate-y-1/2 z-40 bg-input-fill text-foreground px-2 py-3 text-xs tracking-widest uppercase transition-transform duration-300 ${
-          !hasOpenedOnce || isOpen
-            ? 'translate-x-full'
-            : isTagPeeking
-              ? 'translate-x-[calc(100%-8px)]'
-              : 'translate-x-0'
-        }`}
-        style={{ writingMode: 'vertical-lr' }}
-      >
-        10% off
-      </button>
+      {/* Collapsed side tab — not shown on the homepage, which has its own
+          "shop" entry point and doesn't need the offer tab competing for
+          attention. */}
+      {pathname !== '/' && (
+        <button
+          onClick={openDiscount}
+          onMouseEnter={() => {
+            if (peekTimer.current) clearTimeout(peekTimer.current);
+            setIsTagPeeking(false);
+          }}
+          onMouseLeave={schedulePeek}
+          aria-label="Open 10% off offer"
+          className={`fixed right-0 top-9/10 -translate-y-1/2 z-40 bg-input-fill text-foreground px-2 py-3 text-xs tracking-widest uppercase transition-transform duration-300 ${
+            !hasOpenedOnce || isOpen
+              ? 'translate-x-full'
+              : isTagPeeking
+                ? 'translate-x-[calc(100%-8px)]'
+                : 'translate-x-0'
+          }`}
+          style={{ writingMode: 'vertical-lr' }}
+        >
+          10% off
+        </button>
+      )}
     </>
   );
 }

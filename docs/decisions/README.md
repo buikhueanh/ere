@@ -16,6 +16,8 @@ Each file documents one decision: what we chose for **v1**, why, and what should
 | [010](010-rebrand-renovation.md) | Rebrand renovation (teaser, IA, layout) | Gated teaser + new nav/IA (§8 superseded by 011) | UX testing post-launch; see `docs/RENOVATION_PLAN.md` for build status |
 | [011](011-shop-categories-placeholders.md) | Shop categories, placeholders, dropdowns | Collections as categories + product-free placeholder images + 16-card pages | Search UX decision; placeholder links; collection list growth |
 | [012](012-customer-accounts-and-database.md) | Customer accounts & supplementary database | Shopify Customer Account API for auth/identity/orders (**live**) + separate DB for custom fields & recommendation events (**not built**) | Phase 2: DB provider pick, profile onboarding, GDPR delete handling |
+| [013](013-announcement-bar-modes.md) | Announcement bar modes | Config-driven: static signup CTA (opens popup) / promo ticker / hidden; popup mounted once in layout | Promo scheduling; signup + promos shown together |
+| [014](014-brands-index-previews.md) | Brands index with product previews | Group the existing all-products fetch by vendor; 4 newest per brand in `ProductGrid` | Catalogue > 250 products (pagination); brand bios/images |
 
 ## Conventions
 

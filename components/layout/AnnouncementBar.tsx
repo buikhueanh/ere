@@ -2,10 +2,16 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useAnnouncementBar, ANNOUNCEMENT_BAR_HEIGHT } from "./AnnouncementBarContext";
+import { announcements, resolveAnnouncementMode } from "@/config/announcements";
+import PromoTicker from "./PromoTicker";
 
-// Top-of-page shipping banner, shared identically across every page: stays
+// Top-of-page announcement bar, shared identically across every page: stays
 // hidden by default and only appears while the user is actively scrolling
 // up, hiding again as soon as they scroll down.
+//
+// What it shows comes from config/announcements.tsx — a static signup line
+// that opens the DiscountPopup, a ticker of promos, or nothing at all (in
+// which case the bar isn't rendered and the navbar sits at the top).
 //
 // The homepage's content is sized to exactly fill the viewport
 // (100dvh - navbar - footer, see app/page.tsx), so it never actually
@@ -16,7 +22,8 @@ import { useAnnouncementBar, ANNOUNCEMENT_BAR_HEIGHT } from "./AnnouncementBarCo
 // quick-fix spec, 2026-08-21).
 export default function AnnouncementBar() {
   const pathname = usePathname();
-  const { visible, setVisible } = useAnnouncementBar();
+  const { visible, setVisible, openDiscount } = useAnnouncementBar();
+  const resolved = resolveAnnouncementMode(announcements);
   const lastTouchY = useRef(0);
 
   useEffect(() => {
@@ -57,24 +64,35 @@ export default function AnnouncementBar() {
     };
   }, [setVisible]);
 
-  // No banner on the pre-launch gate (decision 010 §2).
-  if (pathname === "/coming-soon") return null;
+  // No banner on the pre-launch gate (decision 010 §2), or when there is
+  // nothing configured to announce.
+  if (pathname === "/coming-soon" || resolved.mode === "hidden") return null;
 
   return (
     <div
       style={{ height: visible ? ANNOUNCEMENT_BAR_HEIGHT : 0 }}
       className="sticky top-0 z-50 w-full overflow-hidden bg-input-fill transition-[height] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
     >
-      <p
+      <div
         style={{ height: ANNOUNCEMENT_BAR_HEIGHT }}
-        className={`flex items-center justify-center px-10 text-center text-xs text-foreground lowercase leading-none transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`text-xs text-foreground lowercase leading-none transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           visible ? "opacity-100" : "opacity-0"
         }`}
       >
-         <span>
-          create your ère <span className="uppercase">ID</span> & enjoy 10% off* your first purchase
-        </span>
-      </p>
+        {resolved.mode === "signup" ? (
+          // A button, not a link: nothing to navigate to, it opens the popup
+          // in place. Same centred single line the bar has always shown.
+          <button
+            type="button"
+            onClick={openDiscount}
+            className="flex h-full w-full items-center justify-center px-10 text-center underline-offset-4"
+          >
+            {resolved.item.message}
+          </button>
+        ) : (
+          <PromoTicker items={resolved.items} />
+        )}
+      </div>
     </div>
   );
 }
