@@ -33,7 +33,7 @@ export default function ProductGallery({ images, title }: ProductGalleryProps) {
               <button
                 key={img.url}
                 onClick={() => setActiveIndex(i)}
-                className={`relative aspect-[2/3] w-full bg-background overflow-hidden border transition-colors ${
+                className={`relative aspect-[3/4] w-full bg-background overflow-hidden border transition-colors ${
                   i === activeIndex ? 'border-foreground' : 'border-transparent hover:border-foreground/30'
                 }`}
               >
@@ -43,13 +43,14 @@ export default function ProductGallery({ images, title }: ProductGalleryProps) {
           </div>
         )}
 
-        {/* Large image — height-driven so the full garment is always visible */}
-        <div className="md:col-start-2 relative h-screen max-h-[800px] bg-background overflow-hidden">
+        {/* Large image — same 3:4 crop as the grid/thumbnail, for a
+            consistent look across every product shot on the site. */}
+        <div className="md:col-start-2 relative aspect-[3/4] bg-background overflow-hidden">
           <Image
             src={active.url}
             alt={active.altText ?? title}
             fill
-            className="object-contain"
+            className="object-cover"
             sizes="(max-width: 1280px) 50vw, 600px"
             priority
           />
