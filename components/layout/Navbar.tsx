@@ -5,11 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Search, ShoppingBag, User, Menu, X, Plus, Minus } from "lucide-react";
-import { navLinks, footerLinks } from "@/config/navigation";
+import { navLinks } from "@/config/navigation";
 import { shopCategories } from "@/config/shop-categories";
 import { useCartContext } from "@/context/CartProvider";
 import { useAnnouncementBar, ANNOUNCEMENT_BAR_HEIGHT } from "./AnnouncementBarContext";
 import NavDropdown from "./NavDropdown";
+import Footer from "./Footer";
 import ProductGrid from "@/components/product/ProductGrid";
 import type { ShopifyProductCard } from "@/types/shopify.types";
 
@@ -39,10 +40,20 @@ export default function Navbar({ vendors = [], isComingSoon = false }: NavbarPro
   const [isSearching, setIsSearching] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+  // Measured live rather than assumed (e.g. a hardcoded top-15/60px) so the
+  // mobile menu panel's top offset can never drift out of sync with the
+  // nav row's real rendered height — a hardcoded guess left a sub-pixel
+  // seam on some devices/DPRs even though it matched exactly in testing.
+  const [navHeight, setNavHeight] = useState(60);
   const { cart, openCart } = useCartContext();
   const itemCount = cart?.totalQuantity ?? 0;
   const pathname = usePathname();
-  const { visible: announcementVisible } = useAnnouncementBar();
+  const {
+    visible: announcementVisible,
+    setVisible: setAnnouncementVisible,
+    setMenuOpen: setAnnouncementMenuOpen,
+  } = useAnnouncementBar();
 
   function closeSearch() {
     setIsSearchOpen(false);
@@ -50,19 +61,55 @@ export default function Navbar({ vendors = [], isComingSoon = false }: NavbarPro
     setSearchResults(null);
   }
 
-  // Any navigation (e.g. clicking a result) should close the search
-  // overlay rather than leaving it open behind the new page. Reset during
+  // Any navigation (e.g. clicking a result, or a link inside the embedded
+  // Footer below) should close the search overlay / mobile menu rather than
+  // leaving them open behind the new page — the individual onClick handlers
+  // on the panel's own nav links cover most cases, but Footer's links have
+  // no way to reach setIsMenuOpen, so this catches those too. Reset during
   // render (not an effect) per React's guidance for state that depends on
   // a changed prop — avoids an extra commit/cascading-render.
   const [prevPathname, setPrevPathname] = useState(pathname);
   if (prevPathname !== pathname) {
     setPrevPathname(pathname);
     closeSearch();
+    setIsMenuOpen(false);
   }
 
   useEffect(() => {
     if (isSearchOpen) searchInputRef.current?.focus();
   }, [isSearchOpen]);
+
+  // Keeps navHeight in sync with the nav row's real rendered height —
+  // measured (via ResizeObserver) rather than assumed, so it can't drift
+  // from whatever the browser/device actually renders even by a sub-pixel.
+  useEffect(() => {
+    const el = navRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => {
+      setNavHeight(entry.contentRect.height);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Mobile menu panel (md:hidden variant only — desktop has no hamburger,
+  // so isMenuOpen never becomes true there): forcing the announcement bar
+  // hidden while open keeps the header at a fixed top:0/height:60px, which
+  // is what lets the panel's top offset below line up with zero gap; body
+  // scroll is locked so the product grid behind the panel can't scroll.
+  // setAnnouncementMenuOpen also tells AnnouncementBar's own scroll/touch
+  // listeners to stand down while open — otherwise a swipe on the open
+  // panel still reaches window and re-shows/hides the bar mid-gesture,
+  // fighting this forced-hidden state. Closing restores the announcement
+  // bar and hands scroll-driven show/hide back to AnnouncementBar.
+  useEffect(() => {
+    setAnnouncementMenuOpen(isMenuOpen);
+    setAnnouncementVisible(!isMenuOpen);
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen, setAnnouncementVisible, setAnnouncementMenuOpen]);
 
   useEffect(() => {
     if (!isSearchOpen) return;
@@ -128,14 +175,14 @@ export default function Navbar({ vendors = [], isComingSoon = false }: NavbarPro
       className="sticky z-50 bg-background transition-[top] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
       style={{ top: announcementVisible ? ANNOUNCEMENT_BAR_HEIGHT : 0 }}
     >
-     <nav className="relative w-full px-6 md:px-10 h-15 pb-2 grid grid-cols-3 items-center">
+     <nav ref={navRef} className="relative w-full px-6 md:px-10 h-15 pb-2 grid grid-cols-3 items-center">
         {/* Left — homepage: newsletter link (desktop only) · in-site: hamburger (mobile) +
             nav links (desktop). */}
         <div className="flex items-center gap-4 justify-self-start">
           {isHomepage ? (
             <Link
               href="/new-in"
-              className="hidden sm:block font-script text-3xl leading-none hover:text-foreground/70 transition-colors"
+              className="font-script text-3xl leading-none hover:text-foreground/70 transition-colors"
             >
               shop
             </Link>
@@ -211,7 +258,7 @@ export default function Navbar({ vendors = [], isComingSoon = false }: NavbarPro
         <Link
           href={isHomepage ? "/new-in" : "/"}
           aria-label={isHomepage ? "New In" : "Home"}
-          className="relative block w-18 h-6 justify-self-center"
+          className="relative block w-15 h-5 md:w-18 md:h-6 justify-self-center"
         >
           <Image
             src="/images/logo-ere.png"
@@ -288,9 +335,16 @@ export default function Navbar({ vendors = [], isComingSoon = false }: NavbarPro
         </div>
       )}
 
-      {/* Search results panel */}
+      {/* Search results panel — fills the rest of the viewport below the
+          header (height = 100vh minus the header's own 60px plus whatever
+          the announcement bar is currently adding above it), rather than
+          the old flat max-h-[70vh] cap that left blank space under short
+          result sets. */}
       {isSearchOpen && searchResults !== null && (
-        <div className="absolute inset-x-0 top-full bg-background border-t border-border max-h-[70vh] overflow-y-auto px-6 md:px-10 py-8 shadow-lg">
+        <div
+          style={{ height: `calc(100vh - ${60 + (announcementVisible ? ANNOUNCEMENT_BAR_HEIGHT : 0)}px)` }}
+          className="absolute inset-x-0 top-full bg-background overflow-y-auto px-6 md:px-10 py-8 shadow-lg"
+        >
           {isSearching ? (
             <p className="text-xs tracking-widest lowercase text-muted text-center py-12">
               searching…
@@ -304,8 +358,15 @@ export default function Navbar({ vendors = [], isComingSoon = false }: NavbarPro
       {/* Mobile menu overlay (in-site variant only) */}
       {!isHomepage && (
         <div
-          className={`fixed inset-0 top-16 bg-background z-40 flex flex-col items-start justify-start gap-5 px-6 md:px-10 md:hidden transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+          style={{ top: navHeight }}
+          className={`fixed inset-x-0 bottom-0 bg-background z-40 flex flex-col md:hidden transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
         >
+          {/* Nav links keep their own px-6/md:px-10 + gap-5 here rather than
+              on the outer panel, so Footer below can sit unpadded — as a
+              direct, full-width child of the panel it renders with exactly
+              the site's real <Footer>, no margin-cancellation math needed
+              to match its spacing pixel-for-pixel. */}
+          <div className="flex-1 flex flex-col items-start justify-start gap-5 px-6 md:px-10">
           {navLinks.map((link) => {
             const isShop = link.href === "/shop";
             const isBrands = link.href === "/brands";
@@ -374,19 +435,9 @@ export default function Navbar({ vendors = [], isComingSoon = false }: NavbarPro
               </div>
             );
           })}
+          </div>
 
-          <div className="h-4" />
-
-          {footerLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setIsMenuOpen(false)}
-              className="text-xs tracking-widest lowercase hover:text-foreground transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
+          <Footer />
         </div>
       )}
     </header>

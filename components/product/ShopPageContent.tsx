@@ -35,7 +35,7 @@ export default async function ShopPageContent({
   );
 
   return (
-    <main className="px-6 md:px-10 py-12">
+    <main className={`px-6 md:px-10 pt-12 ${showNewsletter ? 'pb-5' : 'pb-12'}`}>
       <h1 className="text-xs mb-5">{heading}</h1>
       <ShopGrid cards={items} />
       <PageSelector
@@ -43,21 +43,28 @@ export default async function ShopPageContent({
         totalPages={totalPages}
         basePath={basePath}
       />
-      <div className="mt-24" />
-      {showNewsletter && (
+      {showNewsletter ? (
         <>
-          <div className="mt-16" />
+          {/* 40px — matches the gap from NewsletterSignup's own bottom edge
+              to Footer (main's pb-5 [20px] + the root layout's h-5 spacer
+              [20px] before <Footer>), so the space above and below the
+              section reads as equal. Not mt-24 + mt-12 stacked: two
+              adjacent empty divs' margins collapse to max(24,12), not their
+              sum, so that combination silently produced 96px, not 144px. */}
+          <div className="mt-10" />
           <NewsletterSignup
             headline="into the world of ère"
             subtext={
               <>
-                create your ère ID for a personalized experience to access
+                create your ère ID for a personalized experience to <br className="md:hidden" /> access
                 exclusive content and member-only perks.
               </>
             }
-            imageSrc="/images/hero/homepage.png"
+            imageSrc="/images/newsletter/newsletter-ph.jpeg"
           />
         </>
+      ) : (
+        <div className="mt-24" />
       )}
     </main>
   );

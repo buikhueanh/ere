@@ -16,6 +16,12 @@ type AnnouncementBarContextValue = {
   discountOpen: boolean;
   openDiscount: () => void;
   closeDiscount: () => void;
+  // Mirrors Navbar's mobile menu open state so AnnouncementBar's own
+  // scroll/touch listeners know to stand down while the panel is open —
+  // otherwise a swipe on the open panel still reaches window and fights
+  // Navbar's forced-hidden state.
+  menuOpen: boolean;
+  setMenuOpen: (menuOpen: boolean) => void;
 };
 
 const AnnouncementBarContext = createContext<AnnouncementBarContextValue>({
@@ -24,16 +30,19 @@ const AnnouncementBarContext = createContext<AnnouncementBarContextValue>({
   discountOpen: false,
   openDiscount: () => {},
   closeDiscount: () => {},
+  menuOpen: false,
+  setMenuOpen: () => {},
 });
 
 export function AnnouncementBarProvider({ children }: { children: ReactNode }) {
   const [visible, setVisible] = useState(false);
   const [discountOpen, setDiscountOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const openDiscount = useCallback(() => setDiscountOpen(true), []);
   const closeDiscount = useCallback(() => setDiscountOpen(false), []);
   return (
     <AnnouncementBarContext.Provider
-      value={{ visible, setVisible, discountOpen, openDiscount, closeDiscount }}
+      value={{ visible, setVisible, discountOpen, openDiscount, closeDiscount, menuOpen, setMenuOpen }}
     >
       {children}
     </AnnouncementBarContext.Provider>

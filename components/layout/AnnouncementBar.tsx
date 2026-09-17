@@ -22,12 +22,21 @@ import PromoTicker from "./PromoTicker";
 // quick-fix spec, 2026-08-21).
 export default function AnnouncementBar() {
   const pathname = usePathname();
-  const { visible, setVisible, openDiscount } = useAnnouncementBar();
+  const { visible, setVisible, openDiscount, menuOpen } = useAnnouncementBar();
   const resolved = resolveAnnouncementMode(announcements);
   const lastTouchY = useRef(0);
 
   useEffect(() => {
     setVisible(true);
+  }, [setVisible]);
+
+  // Stands down entirely while Navbar's mobile menu is open — Navbar forces
+  // `visible` itself for that duration, and without this guard a swipe on
+  // the open panel still reaches these window listeners and fights that
+  // forced state mid-gesture. Re-subscribes with a fresh `menuOpen` on
+  // every toggle rather than reading a stale closure.
+  useEffect(() => {
+    if (menuOpen) return;
 
     function handleWheel(e: WheelEvent) {
       if (e.deltaY > 5) {
@@ -62,7 +71,7 @@ export default function AnnouncementBar() {
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
     };
-  }, [setVisible]);
+  }, [setVisible, menuOpen]);
 
   // No banner on the pre-launch gate (decision 010 §2), or when there is
   // nothing configured to announce.
