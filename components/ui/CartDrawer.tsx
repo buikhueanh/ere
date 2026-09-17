@@ -154,7 +154,7 @@ export default function CartDrawer() {
                 }}
                 className={`block uppercase w-full border text-center text-xs tracking-widest py-4 transition-colors ${
                   agreedToTerms
-                    ? 'bg-background border-foreground text-foreground hover:bg-foreground/90 hover:text-background'
+                    ? 'bg-input-fill border border-input-fill text-foreground px-6 py-3 text-xs tracking-widest uppercase hover:bg-foreground/90 hover:text-background transition-colors disabled:opacity-60 peer-focus:border-foreground'
                     : 'bg-background border-border text-muted cursor-not-allowed'
                 }`}
               >
