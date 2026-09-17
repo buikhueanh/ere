@@ -162,7 +162,7 @@ export default function DiscountPopup() {
           {/* Image */}
           <div className="relative w-full md:w-1/2 aspect-[4/3] md:aspect-auto bg-card-bg overflow-hidden">
             <Image
-              src="/images/discount/discount-placeholder.png"
+              src="/images/discount/discount-ph.jpeg"
               alt="ère"
               fill
               className="object-cover"
@@ -171,12 +171,12 @@ export default function DiscountPopup() {
           </div>
 
           {/* Copy + form */}
-          <div className="w-full md:w-1/2 flex flex-col items-center justify-center text-center gap-5 px-8 py-12">
+          <div className="w-full md:w-1/2 flex flex-col items-center justify-center text-center gap-5 px-8 pt-10 pb-11">
             <h2 className="font-handwriting italic text-2xl lowercase -mb-2">
               welcome to ère
             </h2>
             <p className="text-xs text-foreground leading-relaxed">
-              create your ère <span className="uppercase">ID</span> for a personalized experience <br className="hidden md:inline" /> and enjoy 10% off* your first purchase
+              create your ère <span className="uppercase">ID</span> for a personalized experience <br className="md:inline" /> and enjoy 10% off* your first purchase.
             </p>
 
             {status === 'success' ? (
@@ -191,12 +191,12 @@ export default function DiscountPopup() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="email"
                   aria-label="Email address"
-                  className="w-full border border-foreground px-4 py-3 text-xs placeholder:text-muted focus:outline-none focus:border-foreground"
+                  className="peer flex-1 border border-input-fill border-r-0 px-4 py-3 text-xs text-left placeholder:text-muted focus:outline-none focus:border-foreground"
                 />
                 <button
                   type="submit"
                   disabled={status === 'submitting'}
-                  className="w-full bg-foreground text-background px-6 py-3 text-xs tracking-widest uppercase hover:bg-foreground/90 transition-colors disabled:opacity-60"
+                  className="bg-input-fill border border-input-fill text-foreground px-6 py-3 text-xs tracking-widest uppercase hover:bg-foreground/90 hover:text-background transition-colors disabled:opacity-60 peer-focus:border-foreground"
                 >
                   {status === 'submitting' ? 'signing up…' : 'create'}
                 </button>
@@ -208,7 +208,7 @@ export default function DiscountPopup() {
 
 
             <p className="text-[9px] italic lowercase text-foreground/60 leading-relaxed">
-              by creating your ère <span className="uppercase">ID</span>, you agree to receive marketing <br className="hidden md:inline" />  emails from us and acknowledge our privacy policy. <br className="hidden md:inline" /> you can  delete your ère <span className="uppercase">ID</span> anytime.
+              by creating your ère <span className="uppercase">ID</span>, you agree to receive marketing <br />  emails from us and acknowledge our privacy policy.
             </p>
           </div>
         </div>

@@ -9,7 +9,7 @@ import type { ShopifyProductCard } from '@/types/shopify.types';
 // falls (titles vary a lot in length/word order).
 const FUSE_OPTIONS = {
   keys: ['title', 'vendor', 'productType', 'tags'],
-  threshold: 0.8,
+  threshold: 0.95,
   ignoreLocation: true,
 };
 

@@ -29,7 +29,7 @@ export default async function NewInPage({ searchParams }: NewInPageProps) {
   );
 
   return (
-    <main className="px-6 md:px-10 py-12">
+    <main className="px-6 md:px-10 pt-12 pb-5">
       <h1 className="text-xs mb-5">new in</h1>
       <ProductGrid products={items} />
       <PageSelector
@@ -37,16 +37,20 @@ export default async function NewInPage({ searchParams }: NewInPageProps) {
         totalPages={totalPages}
         basePath="/new-in"
       />
-      <div className="mt-24"></div>
+      {/* 40px — matches the gap from NewsletterSignup's own bottom edge to
+          Footer (main's pb-5 [20px] + the root layout's h-5 spacer [20px]
+          before <Footer>), so the space above and below the section reads
+          as equal. */}
+      <div className="mt-10"></div>
       <NewsletterSignup
         headline="into the world of ère"
         subtext={
           <>
-            create your ère ID for a personalized experience to access
+            create your ère ID for a personalized experience to <br className="md:hidden" /> access 
             exclusive content and member-only perks.
           </>
         }
-        imageSrc="/images/hero/homepage.png"
+        imageSrc="/images/newsletter/newsletter-ph.jpeg"
       />
     </main>
   );
