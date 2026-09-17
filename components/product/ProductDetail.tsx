@@ -175,7 +175,7 @@ export default function ProductDetail({ product }: { product: ShopifyProduct }) 
 
   return (
     <>
-      <main className="px-4 md:px-10 py-6 md:py-12">
+      <main className="px-4 md:px-10 pb-6 md:py-12">
         {/* ── Desktop: gallery + info panel ──
             3 explicit columns: thumbnail (fixed 5rem, matches the old
             w-20) · big image (1fr) · info panel (1fr) — the equal fr
