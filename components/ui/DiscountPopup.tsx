@@ -154,13 +154,13 @@ export default function DiscountPopup() {
           <button
             onClick={handleClose}
             aria-label="Close"
-            className="absolute -top-3 -right-3 md:top-4 md:right-4 z-10 flex items-center justify-center w-8 h-8 bg-background text-foreground"
+            className="absolute -top-0 -right-0 sm:-top-2 sm:-right-2 md:top-4 md:right-4 z-10 flex items-center justify-center w-8 h-8 bg-background text-foreground"
           >
             <X size={10} strokeWidth={1.5} />
           </button>
 
           {/* Image */}
-          <div className="relative w-full md:w-1/2 aspect-[4/3] md:aspect-auto bg-card-bg overflow-hidden">
+          <div className="hidden md:block relative w-full md:w-1/2 aspect-[4/3] md:aspect-auto bg-card-bg overflow-hidden">
             <Image
               src="/images/discount/discount-ph.jpeg"
               alt="ère"
@@ -189,7 +189,7 @@ export default function DiscountPopup() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="email"
+                  placeholder="enter your email"
                   aria-label="Email address"
                   className="peer flex-1 border border-input-fill border-r-0 px-4 py-3 text-xs text-left placeholder:text-muted focus:outline-none focus:border-foreground"
                 />
